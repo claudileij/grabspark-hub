@@ -55,20 +55,21 @@ export const initAuthService = () => {
     
     // Interceptar requisições para adicionar o token
     const originalRequest = apiClient.request;
-    apiClient.request = async function<T>(endpoint: string, options = {}) {
+    apiClient.request = async function(endpoint: string, options: any = {}) {
       const token = getAuthToken();
       
       if (token) {
+        const headers = options.headers || {};
         options = {
           ...options,
           headers: {
-            ...(options as RequestInit).headers || {},
+            ...headers,
             Authorization: `Bearer ${token}`,
           },
         };
       }
       
-      return originalRequest.call(this, endpoint, options) as Promise<T>;
+      return originalRequest.call(this, endpoint, options);
     };
   }
 };
@@ -80,6 +81,9 @@ export const loginUser = async (credentials: LoginCredentials): Promise<UserData
   // Simulação para desenvolvimento
   if (process.env.NODE_ENV === 'development') {
     console.log('Modo de desenvolvimento: simulando login');
+    
+    // Para propósitos de debug
+    console.log('Login bem-sucedido', credentials);
     
     return new Promise((resolve) => {
       setTimeout(() => {

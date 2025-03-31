@@ -15,15 +15,25 @@ interface FetchOptions extends RequestInit {
   skipErrorToast?: boolean;
 }
 
+// Define a interface para o apiClient para permitir tipos genéricos
+interface ApiClient {
+  get<T>(endpoint: string, options?: FetchOptions): Promise<T>;
+  post<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T>;
+  put<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T>;
+  patch<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T>;
+  delete<T>(endpoint: string, options?: FetchOptions): Promise<T>;
+  request<T>(endpoint: string, options?: FetchOptions): Promise<T>;
+}
+
 /**
  * Cliente HTTP base para fazer requisições à API
  */
-export const apiClient = {
+export const apiClient: ApiClient = {
   /**
    * Realiza uma requisição GET
    */
-  async get<T>(endpoint: string, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+  async get(endpoint: string, options?: FetchOptions) {
+    return this.request(endpoint, {
       ...options,
       method: "GET",
     });
@@ -32,8 +42,8 @@ export const apiClient = {
   /**
    * Realiza uma requisição POST
    */
-  async post<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+  async post(endpoint: string, data?: any, options?: FetchOptions) {
+    return this.request(endpoint, {
       ...options,
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
@@ -43,8 +53,8 @@ export const apiClient = {
   /**
    * Realiza uma requisição PUT
    */
-  async put<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+  async put(endpoint: string, data?: any, options?: FetchOptions) {
+    return this.request(endpoint, {
       ...options,
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
@@ -54,8 +64,8 @@ export const apiClient = {
   /**
    * Realiza uma requisição PATCH
    */
-  async patch<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+  async patch(endpoint: string, data?: any, options?: FetchOptions) {
+    return this.request(endpoint, {
       ...options,
       method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
@@ -65,8 +75,8 @@ export const apiClient = {
   /**
    * Realiza uma requisição DELETE
    */
-  async delete<T>(endpoint: string, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+  async delete(endpoint: string, options?: FetchOptions) {
+    return this.request(endpoint, {
       ...options,
       method: "DELETE",
     });
@@ -75,7 +85,7 @@ export const apiClient = {
   /**
    * Método base para realizar requisições HTTP
    */
-  async request<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
+  async request(endpoint: string, options: FetchOptions = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     
     const headers = {
@@ -110,7 +120,7 @@ export const apiClient = {
         throw error;
       }
       
-      return data as T;
+      return data;
     } catch (error) {
       // Erros não tratados acima (como erro de rede)
       if (!(error as ApiError).status && !options.skipErrorToast) {
