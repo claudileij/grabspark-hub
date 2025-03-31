@@ -22,7 +22,7 @@ export const apiClient = {
   /**
    * Realiza uma requisição GET
    */
-  async get<T = any>(endpoint: string, options?: FetchOptions): Promise<T> {
+  async get<T>(endpoint: string, options?: FetchOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: "GET",
@@ -32,7 +32,7 @@ export const apiClient = {
   /**
    * Realiza uma requisição POST
    */
-  async post<T = any>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+  async post<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
@@ -43,7 +43,7 @@ export const apiClient = {
   /**
    * Realiza uma requisição PUT
    */
-  async put<T = any>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+  async put<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
@@ -54,7 +54,7 @@ export const apiClient = {
   /**
    * Realiza uma requisição PATCH
    */
-  async patch<T = any>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+  async patch<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
@@ -65,7 +65,7 @@ export const apiClient = {
   /**
    * Realiza uma requisição DELETE
    */
-  async delete<T = any>(endpoint: string, options?: FetchOptions): Promise<T> {
+  async delete<T>(endpoint: string, options?: FetchOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: "DELETE",
@@ -75,7 +75,7 @@ export const apiClient = {
   /**
    * Método base para realizar requisições HTTP
    */
-  async request<T = any>(endpoint: string, options: FetchOptions = {}): Promise<T> {
+  async request<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     
     const headers = {

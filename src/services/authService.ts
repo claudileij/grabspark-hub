@@ -62,7 +62,7 @@ export const initAuthService = () => {
         options = {
           ...options,
           headers: {
-            ...options.headers,
+            ...(options as RequestInit).headers || {},
             Authorization: `Bearer ${token}`,
           },
         };
