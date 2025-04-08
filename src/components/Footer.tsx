@@ -1,5 +1,6 @@
 
 import { Link } from "react-router-dom";
+import { Cloud } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -9,12 +10,12 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
-                <span className="font-bold text-white">GS</span>
+                <Cloud className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-semibold text-foreground">GrabSmart</span>
+              <span className="text-xl font-semibold text-foreground">Flux Storage</span>
             </div>
             <p className="text-muted-foreground text-sm">
-              Soluções inteligentes para requisições na nuvem.
+              Armazenamento e distribuição rápida de arquivos na nuvem.
             </p>
           </div>
           
@@ -36,6 +37,11 @@ const Footer = () => {
                   Documentação
                 </Link>
               </li>
+              <li>
+                <Link to="/api" className="text-muted-foreground hover:text-primary transition-colors">
+                  API
+                </Link>
+              </li>
             </ul>
           </div>
           
@@ -50,6 +56,11 @@ const Footer = () => {
               <li>
                 <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
                   Contato
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                  Blog
                 </Link>
               </li>
               <li>
@@ -73,13 +84,23 @@ const Footer = () => {
                   Termos
                 </Link>
               </li>
+              <li>
+                <Link to="/security" className="text-muted-foreground hover:text-primary transition-colors">
+                  Segurança
+                </Link>
+              </li>
+              <li>
+                <Link to="/compliance" className="text-muted-foreground hover:text-primary transition-colors">
+                  Conformidade
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-border/50 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} GrabSmart. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} Flux Storage. Todos os direitos reservados.
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="text-muted-foreground hover:text-primary">

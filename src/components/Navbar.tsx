@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogIn } from "lucide-react";
+import { Menu, X, LogIn, Cloud } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,9 +13,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
-              <span className="font-bold text-white">GS</span>
+              <Cloud className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-semibold text-foreground">GrabSmart</span>
+            <span className="text-xl font-semibold text-foreground">Flux Storage</span>
           </Link>
 
           {/* Desktop navigation */}
@@ -26,11 +26,11 @@ const Navbar = () => {
             <Link to="/features" className="text-foreground hover:text-primary transition-colors">
               Recursos
             </Link>
-            <Link to="/about" className="text-foreground hover:text-primary transition-colors">
-              Sobre
-            </Link>
             <Link to="/pricing" className="text-foreground hover:text-primary transition-colors">
               Preços
+            </Link>
+            <Link to="/docs" className="text-foreground hover:text-primary transition-colors">
+              Documentação
             </Link>
             <div className="ml-4 flex items-center space-x-2">
               <Button asChild variant="ghost">
@@ -82,18 +82,18 @@ const Navbar = () => {
               Recursos
             </Link>
             <Link
-              to="/about"
-              className="block py-2 text-foreground hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Sobre
-            </Link>
-            <Link
               to="/pricing"
               className="block py-2 text-foreground hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
               Preços
+            </Link>
+            <Link
+              to="/docs"
+              className="block py-2 text-foreground hover:text-primary"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Documentação
             </Link>
             <div className="pt-4 flex flex-col space-y-2">
               <Button asChild variant="outline">
