@@ -25,13 +25,14 @@ interface ApiClient {
 }
 
 /**
- * Cliente HTTP base para fazer requisições à API
+ * Implementação do cliente HTTP base para fazer requisições à API
  */
 const apiClientImpl: ApiClient = {
   /**
    * Realiza uma requisição GET
    */
   async get<T>(endpoint: string, options?: FetchOptions): Promise<T> {
+    // A key fix is here - we're explicitly typing the request call
     return this.request<T>(endpoint, {
       ...options,
       method: "GET",
@@ -42,6 +43,7 @@ const apiClientImpl: ApiClient = {
    * Realiza uma requisição POST
    */
   async post<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+    // Make sure to pass the generic type parameter correctly
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
@@ -53,6 +55,7 @@ const apiClientImpl: ApiClient = {
    * Realiza uma requisição PUT
    */
   async put<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+    // Make sure to pass the generic type parameter correctly
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
@@ -64,6 +67,7 @@ const apiClientImpl: ApiClient = {
    * Realiza uma requisição PATCH
    */
   async patch<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+    // Make sure to pass the generic type parameter correctly
     return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
@@ -75,6 +79,7 @@ const apiClientImpl: ApiClient = {
    * Realiza uma requisição DELETE
    */
   async delete<T>(endpoint: string, options?: FetchOptions): Promise<T> {
+    // Make sure to pass the generic type parameter correctly
     return this.request<T>(endpoint, {
       ...options,
       method: "DELETE",
