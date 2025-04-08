@@ -1,11 +1,16 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogIn, Cloud } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <nav className="fixed top-0 w-full bg-background/90 backdrop-blur-md z-50 border-b border-border/40 shadow-sm">
@@ -20,16 +25,28 @@ const Navbar = () => {
 
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/" 
+              className={`transition-colors ${isActive('/') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+            >
               Início
             </Link>
-            <Link to="/features" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/features" 
+              className={`transition-colors ${isActive('/features') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+            >
               Recursos
             </Link>
-            <Link to="/pricing" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/pricing" 
+              className={`transition-colors ${isActive('/pricing') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+            >
               Preços
             </Link>
-            <Link to="/docs" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/docs" 
+              className={`transition-colors ${isActive('/docs') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+            >
               Documentação
             </Link>
             <div className="ml-4 flex items-center space-x-2">
@@ -69,28 +86,28 @@ const Navbar = () => {
           <div className="px-4 pt-2 pb-4 space-y-1">
             <Link
               to="/"
-              className="block py-2 text-foreground hover:text-primary"
+              className={`block py-2 transition-colors ${isActive('/') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
               onClick={() => setIsMenuOpen(false)}
             >
               Início
             </Link>
             <Link
               to="/features"
-              className="block py-2 text-foreground hover:text-primary"
+              className={`block py-2 transition-colors ${isActive('/features') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
               onClick={() => setIsMenuOpen(false)}
             >
               Recursos
             </Link>
             <Link
               to="/pricing"
-              className="block py-2 text-foreground hover:text-primary"
+              className={`block py-2 transition-colors ${isActive('/pricing') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
               onClick={() => setIsMenuOpen(false)}
             >
               Preços
             </Link>
             <Link
               to="/docs"
-              className="block py-2 text-foreground hover:text-primary"
+              className={`block py-2 transition-colors ${isActive('/docs') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
               onClick={() => setIsMenuOpen(false)}
             >
               Documentação
