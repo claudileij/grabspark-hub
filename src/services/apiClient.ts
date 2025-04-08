@@ -32,58 +32,53 @@ const apiClientImpl: ApiClient = {
    * Realiza uma requisição GET
    */
   async get<T>(endpoint: string, options?: FetchOptions): Promise<T> {
-    // A key fix is here - we're explicitly typing the request call
-    return this.request<T>(endpoint, {
+    return this.request(endpoint, {
       ...options,
       method: "GET",
-    });
+    }) as Promise<T>;
   },
 
   /**
    * Realiza uma requisição POST
    */
   async post<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    // Make sure to pass the generic type parameter correctly
-    return this.request<T>(endpoint, {
+    return this.request(endpoint, {
       ...options,
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }) as Promise<T>;
   },
 
   /**
    * Realiza uma requisição PUT
    */
   async put<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    // Make sure to pass the generic type parameter correctly
-    return this.request<T>(endpoint, {
+    return this.request(endpoint, {
       ...options,
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }) as Promise<T>;
   },
 
   /**
    * Realiza uma requisição PATCH
    */
   async patch<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    // Make sure to pass the generic type parameter correctly
-    return this.request<T>(endpoint, {
+    return this.request(endpoint, {
       ...options,
       method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }) as Promise<T>;
   },
 
   /**
    * Realiza uma requisição DELETE
    */
   async delete<T>(endpoint: string, options?: FetchOptions): Promise<T> {
-    // Make sure to pass the generic type parameter correctly
-    return this.request<T>(endpoint, {
+    return this.request(endpoint, {
       ...options,
       method: "DELETE",
-    });
+    }) as Promise<T>;
   },
 
   /**
