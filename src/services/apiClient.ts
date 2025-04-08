@@ -27,7 +27,7 @@ interface ApiClient {
 /**
  * Cliente HTTP base para fazer requisições à API
  */
-export const apiClient: ApiClient = {
+const apiClientImpl: ApiClient = {
   /**
    * Realiza uma requisição GET
    */
@@ -129,6 +129,9 @@ export const apiClient: ApiClient = {
     }
   },
 };
+
+// Export the implemented client
+export const apiClient = apiClientImpl;
 
 // Para uso em testes ou desenvolvimento
 export const setupMockApi = (mockImplementation: Partial<typeof apiClient>) => {

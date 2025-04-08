@@ -139,7 +139,7 @@ export const registerUser = async (data: RegisterData): Promise<RegisterResponse
   }
   
   // Implementação real para produção
-  return await apiClient.post('/register/code', data);
+  return await apiClient.post<RegisterResponse>('/register/code', data);
 };
 
 /**
@@ -161,7 +161,7 @@ export const confirmRegister = async (data: ConfirmRegisterData): Promise<Regist
   }
   
   // Implementação real para produção
-  return await apiClient.post('/register/confirm', data);
+  return await apiClient.post<RegisterResponse>('/register/confirm', data);
 };
 
 /**
@@ -179,7 +179,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
     return new Promise((resolve) => {
       setTimeout(() => {
         // Simula resposta de login bem-sucedido
-        const mockResponse = {
+        const mockResponse: AuthResponse = {
           success: true,
           access_token: "mock-jwt-token",
           user: {
@@ -227,7 +227,7 @@ export const getCurrentUser = async (): Promise<UserData | null> => {
   }
   
   try {
-    const response = await apiClient.get('/user/me');
+    const response = await apiClient.get<{ user: UserData }>('/user/me');
     return response.user;
   } catch (error) {
     // Se ocorrer um erro 401, remove o token
