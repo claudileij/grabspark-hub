@@ -36,7 +36,7 @@ const apiClientImpl: ApiClient = {
       ...options,
       method: "GET",
     };
-    return this.request<T>(endpoint, config);
+    return apiClientImpl.request(endpoint, config) as Promise<T>;
   },
 
   /**
@@ -48,7 +48,7 @@ const apiClientImpl: ApiClient = {
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     };
-    return this.request<T>(endpoint, config);
+    return apiClientImpl.request(endpoint, config) as Promise<T>;
   },
 
   /**
@@ -60,7 +60,7 @@ const apiClientImpl: ApiClient = {
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     };
-    return this.request<T>(endpoint, config);
+    return apiClientImpl.request(endpoint, config) as Promise<T>;
   },
 
   /**
@@ -72,7 +72,7 @@ const apiClientImpl: ApiClient = {
       method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
     };
-    return this.request<T>(endpoint, config);
+    return apiClientImpl.request(endpoint, config) as Promise<T>;
   },
 
   /**
@@ -83,7 +83,7 @@ const apiClientImpl: ApiClient = {
       ...options,
       method: "DELETE",
     };
-    return this.request<T>(endpoint, config);
+    return apiClientImpl.request(endpoint, config) as Promise<T>;
   },
 
   /**
