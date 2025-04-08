@@ -32,53 +32,58 @@ const apiClientImpl: ApiClient = {
    * Realiza uma requisição GET
    */
   async get<T>(endpoint: string, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+    const config: FetchOptions = {
       ...options,
       method: "GET",
-    });
+    };
+    return this.request<T>(endpoint, config);
   },
 
   /**
    * Realiza uma requisição POST
    */
   async post<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+    const config: FetchOptions = {
       ...options,
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
-    });
+    };
+    return this.request<T>(endpoint, config);
   },
 
   /**
    * Realiza uma requisição PUT
    */
   async put<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+    const config: FetchOptions = {
       ...options,
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
-    });
+    };
+    return this.request<T>(endpoint, config);
   },
 
   /**
    * Realiza uma requisição PATCH
    */
   async patch<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+    const config: FetchOptions = {
       ...options,
       method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
-    });
+    };
+    return this.request<T>(endpoint, config);
   },
 
   /**
    * Realiza uma requisição DELETE
    */
   async delete<T>(endpoint: string, options?: FetchOptions): Promise<T> {
-    return this.request<T>(endpoint, {
+    const config: FetchOptions = {
       ...options,
       method: "DELETE",
-    });
+    };
+    return this.request<T>(endpoint, config);
   },
 
   /**
