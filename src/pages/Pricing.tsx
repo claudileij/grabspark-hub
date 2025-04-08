@@ -1,3 +1,4 @@
+
 import { Check, X } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ const PricingPage = () => {
       period: "mês",
       description: "Para experimentar o serviço",
       storage: "10 GB",
-      cdn: "1 GB/mês",
+      cdn: "1 GB",
       maxFileSize: "256 MB",
       expiration: "24 horas",
       features: [
@@ -32,11 +33,10 @@ const PricingPage = () => {
       period: "mês",
       description: "V - Tudo do Gratuito",
       storage: "100 GB",
-      cdn: "70 GB/mês",
+      cdn: "70 GB",
       maxFileSize: "1 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do Gratuito ✓", included: true },
         { name: "Expiração configurável", included: true },
         { name: "Links personalizáveis", included: true },
       ],
@@ -50,11 +50,10 @@ const PricingPage = () => {
       period: "mês",
       description: "V - Tudo do Starter",
       storage: "500 GB",
-      cdn: "400 GB/mês",
+      cdn: "400 GB",
       maxFileSize: "5 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do Starter ✓", included: true },
         { name: "Acesso via API", included: true },
         { name: "Links com senha", included: true },
       ],
@@ -68,11 +67,10 @@ const PricingPage = () => {
       period: "mês",
       description: "V - Tudo do Pro",
       storage: "1 TB",
-      cdn: "800 GB/mês",
+      cdn: "800 GB",
       maxFileSize: "10 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do Pro ✓", included: true },
         { name: "Webhooks", included: true },
         { name: "Analytics avançado", included: true },
       ],
@@ -86,11 +84,10 @@ const PricingPage = () => {
       period: "mês",
       description: "V - Tudo do Turbo",
       storage: "5 TB",
-      cdn: "4 TB/mês",
+      cdn: "4 TB",
       maxFileSize: "20 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do Turbo ✓", included: true },
         { name: "Suporte prioritário", included: true },
       ],
       popular: false,
@@ -148,6 +145,14 @@ const PricingPage = () => {
                   </div>
                   
                   <div className="space-y-2">
+                    {plan.name !== "Gratuito" && (
+                      <div className="flex items-center mb-2">
+                        <Check className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                        <span className="text-sm font-medium">
+                          {plan.description}
+                        </span>
+                      </div>
+                    )}
                     {plan.features.map((feature) => (
                       <div key={feature.name} className="flex items-center">
                         {feature.included ? (
@@ -197,7 +202,7 @@ const PricingPage = () => {
                   ))}
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">CDN mensal</TableCell>
+                  <TableCell className="font-medium">CDN</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-cdn`} className="text-center">
                       {plan.cdn}
@@ -224,7 +229,8 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Acesso via API</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-api`} className="text-center">
-                      {plan.features.find(f => f.name === "Acesso via API")?.included ? 
+                      {plan.features.find(f => f.name === "Acesso via API")?.included || 
+                       plan.name === "Pro" || plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -234,7 +240,8 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Links protegidos por senha</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-password`} className="text-center">
-                      {plan.features.find(f => f.name === "Links protegidos por senha")?.included ? 
+                      {plan.features.find(f => f.name === "Links com senha")?.included || 
+                       plan.name === "Pro" || plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -244,7 +251,8 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Webhooks</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-webhooks`} className="text-center">
-                      {plan.features.find(f => f.name === "Webhooks")?.included ? 
+                      {plan.features.find(f => f.name === "Webhooks")?.included || 
+                       plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -254,7 +262,8 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Analytics avançado</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-analytics`} className="text-center">
-                      {plan.features.find(f => f.name === "Analytics avançado")?.included ? 
+                      {plan.features.find(f => f.name === "Analytics avançado")?.included || 
+                       plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -264,7 +273,8 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Suporte prioritário</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-support`} className="text-center">
-                      {plan.features.find(f => f.name === "Suporte prioritário")?.included ? 
+                      {plan.features.find(f => f.name === "Suporte prioritário")?.included || 
+                       plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -298,6 +308,11 @@ const PricingPage = () => {
               6. A CDN é destinada para visualização e acesso rápido de arquivos em apps e sistemas. Não é permitida sua utilização como espelho de alto tráfego contínuo.
             </p>
           </div>
+          <div className="mt-4">
+            <Button asChild variant="outline">
+              <Link to="/terms">Ver termos completos</Link>
+            </Button>
+          </div>
         </div>
 
         {/* FAQ Section */}
@@ -307,7 +322,7 @@ const PricingPage = () => {
             <div className="p-6 border rounded-lg">
               <h3 className="text-xl font-semibold mb-2">Como funciona o limite de CDN?</h3>
               <p className="text-muted-foreground">
-                O limite de CDN refere-se à quantidade de dados que podem ser transferidos quando seus arquivos são visualizados online. Por exemplo, se você tem um arquivo de 10MB e ele é acessado 100 vezes em um mês, isso consumirá 1GB da sua franquia de CDN.
+                O limite de CDN refere-se à quantidade de armazenamento disponível para visualização online dos seus arquivos, não à quantidade de acessos. Este limite é separado do seu armazenamento principal.
               </p>
             </div>
             <div className="p-6 border rounded-lg">
@@ -319,7 +334,7 @@ const PricingPage = () => {
             <div className="p-6 border rounded-lg">
               <h3 className="text-xl font-semibold mb-2">O que acontece se eu exceder meus limites?</h3>
               <p className="text-muted-foreground">
-                Se você exceder o limite de armazenamento, novos uploads serão temporariamente bloqueados. Se exceder o limite de CDN, a transferência via CDN será pausada até o próximo ciclo, mas os downloads diretos continuarão funcionando.
+                Se você exceder o limite de armazenamento, novos uploads serão temporariamente bloqueados. Se exceder o limite de CDN, a distribuição via CDN será pausada até o próximo ciclo, mas os downloads diretos continuarão funcionando.
               </p>
             </div>
             <div className="p-6 border rounded-lg">
