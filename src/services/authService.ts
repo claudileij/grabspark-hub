@@ -1,27 +1,38 @@
 
 import { apiClient } from "./apiClient";
 
-interface LoginCredentials {
+// Interfaces para os dados
+interface RegisterData {
+  username: string;
   email: string;
   password: string;
 }
 
-interface RegisterData {
-  name: string;
+interface ConfirmRegisterData {
   email: string;
-  password: string;
+  code: string;
+}
+
+interface LoginCredentials {
+  email: string;
+  encPassword: string;
 }
 
 interface AuthResponse {
+  success: boolean;
+  access_token: string;
   user: UserData;
-  token: string;
 }
 
 interface UserData {
   id: string;
-  name: string;
   email: string;
-  createdAt: string;
+  username: string;
+}
+
+interface RegisterResponse {
+  success: boolean;
+  message: string;
 }
 
 // Token de autenticação
@@ -75,67 +86,120 @@ export const initAuthService = () => {
 };
 
 /**
- * Realiza o login do usuário
+ * Criptografa a senha usando AES-CBC
  */
-export const loginUser = async (credentials: LoginCredentials): Promise<UserData> => {
-  // Simulação para desenvolvimento
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Modo de desenvolvimento: simulando login');
-    
-    // Para propósitos de debug
-    console.log('Login bem-sucedido', credentials);
-    
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Simula um usuário de teste
-        const mockUser = {
-          id: "user-123",
-          name: "Usuário Teste",
-          email: credentials.email,
-          createdAt: new Date().toISOString(),
-        };
-        const mockToken = "mock-jwt-token";
-        
-        setAuthToken(mockToken);
-        
-        resolve(mockUser);
-      }, 800); // Simula um delay de rede
-    });
-  }
-  
-  // Implementação real para produção
-  const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
-  setAuthToken(response.token);
-  return response.user;
+export const encryptPassword = async (password: string): Promise<string> => {
+  const keyHex = '2b7e151628aed2a6abf7158809cf4f3c2b7e151628aed2a6abf7158809cf4f3c';
+  const ivHex = '000102030405060708090a0b0c0d0e0f';
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    hexToBytes(keyHex),
+    { name: 'AES-CBC' },
+    false,
+    ['encrypt']
+  );
+
+  const iv = hexToBytes(ivHex);
+
+  const encrypted = await crypto.subtle.encrypt(
+    { name: 'AES-CBC', iv },
+    key,
+    new TextEncoder().encode(password)
+  );
+
+  return btoa(String.fromCharCode(...new Uint8Array(encrypted)));
 };
+
+// Utilitários
+function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+  }
+  return bytes;
+}
 
 /**
  * Registra um novo usuário
  */
-export const registerUser = async (data: RegisterData): Promise<UserData> => {
+export const registerUser = async (data: RegisterData): Promise<RegisterResponse> => {
   // Simulação para desenvolvimento
   if (process.env.NODE_ENV === 'development') {
-    console.log('Modo de desenvolvimento: simulando registro');
+    console.log('Modo de desenvolvimento: simulando requisição de registro');
     
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Simula um usuário registrado
-        const mockUser = {
-          id: "user-" + Math.random().toString(36).substr(2, 9),
-          name: data.name,
-          email: data.email,
-          createdAt: new Date().toISOString(),
-        };
-        
-        resolve(mockUser);
-      }, 1000); // Simula um delay de rede
+        resolve({
+          success: true,
+          message: "Verification code sent"
+        });
+      }, 1000);
     });
   }
   
   // Implementação real para produção
-  const response = await apiClient.post<AuthResponse>('/auth/register', data);
-  // Não faz login automático após registro, apenas retorna os dados
-  return response.user;
+  return await apiClient.post('/register/code', data);
+};
+
+/**
+ * Confirma o registro com o código de verificação
+ */
+export const confirmRegister = async (data: ConfirmRegisterData): Promise<RegisterResponse> => {
+  // Simulação para desenvolvimento
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Modo de desenvolvimento: simulando confirmação de registro');
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: true,
+          message: "Registration confirmed"
+        });
+      }, 1000);
+    });
+  }
+  
+  // Implementação real para produção
+  return await apiClient.post('/register/confirm', data);
+};
+
+/**
+ * Realiza o login do usuário
+ */
+export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
+  // Criptografar a senha antes de enviar
+  const encPassword = await encryptPassword(password);
+  
+  // Simulação para desenvolvimento
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Modo de desenvolvimento: simulando login');
+    console.log('Login tentativa', { email, encPassword });
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Simula resposta de login bem-sucedido
+        const mockResponse = {
+          success: true,
+          access_token: "mock-jwt-token",
+          user: {
+            id: "user-123",
+            email: email,
+            username: "Usuario Teste",
+          },
+        };
+        
+        setAuthToken(mockResponse.access_token);
+        
+        resolve(mockResponse);
+      }, 800);
+    });
+  }
+  
+  // Implementação real para produção
+  const response = await apiClient.post<AuthResponse>('/login', { email, encPassword });
+  setAuthToken(response.access_token);
+  return response;
 };
 
 /**
@@ -163,7 +227,8 @@ export const getCurrentUser = async (): Promise<UserData | null> => {
   }
   
   try {
-    return await apiClient.get<UserData>('/auth/me');
+    const response = await apiClient.get('/user/me');
+    return response.user;
   } catch (error) {
     // Se ocorrer um erro 401, remove o token
     if ((error as any).status === 401) {

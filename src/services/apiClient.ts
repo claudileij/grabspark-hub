@@ -1,5 +1,4 @@
 
-// Base client para realizar chamadas de API
 import { toast } from "sonner";
 
 export interface ApiError {
@@ -9,7 +8,7 @@ export interface ApiError {
 }
 
 // URL base da API - pode ser substituída em uma variável de ambiente
-const API_BASE_URL = "/api"; 
+const API_BASE_URL = "http://localhost:3000"; 
 
 interface FetchOptions extends RequestInit {
   skipErrorToast?: boolean;
@@ -32,8 +31,8 @@ export const apiClient: ApiClient = {
   /**
    * Realiza uma requisição GET
    */
-  async get(endpoint: string, options?: FetchOptions) {
-    return this.request(endpoint, {
+  async get<T>(endpoint: string, options?: FetchOptions): Promise<T> {
+    return this.request<T>(endpoint, {
       ...options,
       method: "GET",
     });
@@ -42,8 +41,8 @@ export const apiClient: ApiClient = {
   /**
    * Realiza uma requisição POST
    */
-  async post(endpoint: string, data?: any, options?: FetchOptions) {
-    return this.request(endpoint, {
+  async post<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+    return this.request<T>(endpoint, {
       ...options,
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
@@ -53,8 +52,8 @@ export const apiClient: ApiClient = {
   /**
    * Realiza uma requisição PUT
    */
-  async put(endpoint: string, data?: any, options?: FetchOptions) {
-    return this.request(endpoint, {
+  async put<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+    return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
@@ -64,8 +63,8 @@ export const apiClient: ApiClient = {
   /**
    * Realiza uma requisição PATCH
    */
-  async patch(endpoint: string, data?: any, options?: FetchOptions) {
-    return this.request(endpoint, {
+  async patch<T>(endpoint: string, data?: any, options?: FetchOptions): Promise<T> {
+    return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
@@ -75,8 +74,8 @@ export const apiClient: ApiClient = {
   /**
    * Realiza uma requisição DELETE
    */
-  async delete(endpoint: string, options?: FetchOptions) {
-    return this.request(endpoint, {
+  async delete<T>(endpoint: string, options?: FetchOptions): Promise<T> {
+    return this.request<T>(endpoint, {
       ...options,
       method: "DELETE",
     });
@@ -85,7 +84,7 @@ export const apiClient: ApiClient = {
   /**
    * Método base para realizar requisições HTTP
    */
-  async request(endpoint: string, options: FetchOptions = {}) {
+  async request<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     
     const headers = {
@@ -120,7 +119,7 @@ export const apiClient: ApiClient = {
         throw error;
       }
       
-      return data;
+      return data as T;
     } catch (error) {
       // Erros não tratados acima (como erro de rede)
       if (!(error as ApiError).status && !options.skipErrorToast) {

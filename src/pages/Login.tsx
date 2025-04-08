@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import Layout from "@/components/Layout";
 import { loginUser } from "@/services/authService";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,8 +22,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Aqui seria a chamada real para a API
-      await loginUser({ email, password });
+      const response = await loginUser(email, password);
       
       toast({
         title: "Login realizado com sucesso",
@@ -30,8 +30,8 @@ const Login = () => {
       });
       
       // Redirecionar após login bem-sucedido
-      // navigate("/dashboard");
-      console.log("Login bem-sucedido", { email, password });
+      navigate("/dashboard");
+      console.log("Login bem-sucedido", response);
       
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -50,7 +50,7 @@ const Login = () => {
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-md mx-auto glass-card rounded-lg p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2">Bem-vindo de volta</h1>
+            <h1 className="text-2xl font-bold mb-2">Bem-vindo ao Flux Storage</h1>
             <p className="text-muted-foreground">
               Entre com sua conta para continuar
             </p>
