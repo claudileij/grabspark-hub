@@ -32,8 +32,8 @@ const Navbar = () => {
               Início
             </Link>
             <Link 
-              to="/features" 
-              className={`transition-colors ${isActive('/features') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+              to="/resources" 
+              className={`transition-colors ${isActive('/resources') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
             >
               Recursos
             </Link>
@@ -44,10 +44,10 @@ const Navbar = () => {
               Preços
             </Link>
             <Link 
-              to="/docs" 
-              className={`transition-colors ${isActive('/docs') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+              to="/privacy" 
+              className={`transition-colors ${isActive('/privacy') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
             >
-              Documentação
+              Privacidade
             </Link>
             <div className="ml-4 flex items-center space-x-2">
               <Button asChild variant="ghost">
@@ -92,8 +92,8 @@ const Navbar = () => {
               Início
             </Link>
             <Link
-              to="/features"
-              className={`block py-2 transition-colors ${isActive('/features') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+              to="/resources"
+              className={`block py-2 transition-colors ${isActive('/resources') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
               onClick={() => setIsMenuOpen(false)}
             >
               Recursos
@@ -106,11 +106,11 @@ const Navbar = () => {
               Preços
             </Link>
             <Link
-              to="/docs"
-              className={`block py-2 transition-colors ${isActive('/docs') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
+              to="/privacy"
+              className={`block py-2 transition-colors ${isActive('/privacy') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Documentação
+              Privacidade
             </Link>
             <div className="pt-4 flex flex-col space-y-2">
               <Button asChild variant="outline">

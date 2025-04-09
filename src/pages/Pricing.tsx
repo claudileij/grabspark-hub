@@ -28,32 +28,17 @@ const PricingPage = () => {
       buttonLink: "/register",
     },
     {
-      name: "Starter",
-      price: "R$14,90",
-      period: "mês",
-      description: "V - Tudo do Gratuito",
-      storage: "100 GB",
-      cdn: "70 GB",
-      maxFileSize: "1 GB",
-      expiration: "Personalizável",
-      features: [
-        { name: "Expiração configurável", included: true },
-        { name: "Links personalizáveis", included: true },
-      ],
-      popular: false,
-      buttonText: "Assinar Starter",
-      buttonLink: "/register?plan=starter",
-    },
-    {
       name: "Pro",
       price: "R$34,90",
       period: "mês",
-      description: "V - Tudo do Starter",
+      description: "V - Tudo do Gratuito",
       storage: "500 GB",
       cdn: "400 GB",
       maxFileSize: "5 GB",
       expiration: "Personalizável",
       features: [
+        { name: "Expiração configurável", included: true },
+        { name: "Links personalizáveis", included: true },
         { name: "Acesso via API", included: true },
         { name: "Links com senha", included: true },
       ],
@@ -107,7 +92,7 @@ const PricingPage = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-16">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-16">
           {pricingPlans.map((plan) => (
             <Card key={plan.name} className={`flex flex-col ${plan.popular ? 'border-primary shadow-lg' : ''}`}>
               {plan.popular && (
@@ -131,7 +116,7 @@ const PricingPage = () => {
                       <span className="font-semibold">{plan.storage}</span>
                     </div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">CDN</span>
+                      <span className="text-sm font-medium">CDN (armazenamento)</span>
                       <span className="font-semibold">{plan.cdn}</span>
                     </div>
                     <div className="flex justify-between items-center mb-2">
@@ -145,14 +130,6 @@ const PricingPage = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    {plan.name !== "Gratuito" && (
-                      <div className="flex items-center mb-2">
-                        <Check className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                        <span className="text-sm font-medium">
-                          {plan.description}
-                        </span>
-                      </div>
-                    )}
                     {plan.features.map((feature) => (
                       <div key={feature.name} className="flex items-center">
                         {feature.included ? (
@@ -202,7 +179,7 @@ const PricingPage = () => {
                   ))}
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">CDN</TableCell>
+                  <TableCell className="font-medium">CDN (armazenamento)</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-cdn`} className="text-center">
                       {plan.cdn}
@@ -229,8 +206,7 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Acesso via API</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-api`} className="text-center">
-                      {plan.features.find(f => f.name === "Acesso via API")?.included || 
-                       plan.name === "Pro" || plan.name === "Turbo" || plan.name === "Ultra" ? 
+                      {plan.name === "Pro" || plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -240,8 +216,7 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Links protegidos por senha</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-password`} className="text-center">
-                      {plan.features.find(f => f.name === "Links com senha")?.included || 
-                       plan.name === "Pro" || plan.name === "Turbo" || plan.name === "Ultra" ? 
+                      {plan.name === "Pro" || plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -251,8 +226,7 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Webhooks</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-webhooks`} className="text-center">
-                      {plan.features.find(f => f.name === "Webhooks")?.included || 
-                       plan.name === "Turbo" || plan.name === "Ultra" ? 
+                      {plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -262,8 +236,7 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Analytics avançado</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-analytics`} className="text-center">
-                      {plan.features.find(f => f.name === "Analytics avançado")?.included || 
-                       plan.name === "Turbo" || plan.name === "Ultra" ? 
+                      {plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
@@ -273,8 +246,7 @@ const PricingPage = () => {
                   <TableCell className="font-medium">Suporte prioritário</TableCell>
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-support`} className="text-center">
-                      {plan.features.find(f => f.name === "Suporte prioritário")?.included || 
-                       plan.name === "Ultra" ? 
+                      {plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
