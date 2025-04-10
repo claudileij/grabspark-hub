@@ -1,4 +1,3 @@
-
 import { apiClient } from "./apiClient";
 
 // Interfaces para os dados
@@ -31,6 +30,11 @@ interface UserData {
 }
 
 interface RegisterResponse {
+  success: boolean;
+  message: string;
+}
+
+interface RecoveryResponse {
   success: boolean;
   message: string;
 }
@@ -236,6 +240,81 @@ export const getCurrentUser = async (): Promise<UserData | null> => {
     }
     return null;
   }
+};
+
+/**
+ * Solicita recuperação de senha
+ * Envia um código de recuperação para o email do usuário
+ */
+export const requestPasswordRecovery = async (email: string): Promise<RecoveryResponse> => {
+  // Simulação para desenvolvimento
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Modo de desenvolvimento: simulando requisição de recuperação de senha');
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: true,
+          message: "Código de recuperação enviado para seu email"
+        });
+      }, 1000);
+    });
+  }
+  
+  // Implementação real para produção
+  return await apiClient.post<RecoveryResponse>('/login/recovery', { email });
+};
+
+/**
+ * Verifica o código de recuperação
+ */
+export const verifyRecoveryCode = async (email: string, code: string): Promise<RecoveryResponse> => {
+  // Simulação para desenvolvimento
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Modo de desenvolvimento: simulando verificação de código de recuperação');
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: true,
+          message: "Código verificado com sucesso"
+        });
+      }, 1000);
+    });
+  }
+  
+  // Implementação real para produção
+  return await apiClient.post<RecoveryResponse>('/login/recovery/code', { email, code });
+};
+
+/**
+ * Confirma a recuperação de senha
+ * Define uma nova senha para o usuário
+ */
+export const confirmPasswordRecovery = async (email: string, code: string, newPassword: string): Promise<RecoveryResponse> => {
+  // Criptografar a nova senha antes de enviar
+  const encryptedPassword = await encryptPassword(newPassword);
+  
+  // Simulação para desenvolvimento
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Modo de desenvolvimento: simulando confirmação de recuperação de senha');
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: true,
+          message: "Senha atualizada com sucesso"
+        });
+      }, 1000);
+    });
+  }
+  
+  // Implementação real para produção
+  return await apiClient.post<RecoveryResponse>('/login/recovery/confirm', { 
+    email, 
+    code,
+    newPassword: encryptedPassword 
+  });
 };
 
 // Inicializa o serviço de autenticação
