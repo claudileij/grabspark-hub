@@ -1,3 +1,4 @@
+
 import { apiClient } from "./apiClient";
 
 // Interfaces para os dados
@@ -52,7 +53,8 @@ const setAuthToken = (token: string | null) => {
   }
 };
 
-const getAuthToken = (): string | null => {
+// Exportando a função getAuthToken para ser usada em outros serviços
+export const getAuthToken = (): string | null => {
   if (!authToken) {
     authToken = localStorage.getItem("auth_token");
   }

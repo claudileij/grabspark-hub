@@ -24,21 +24,24 @@ const Login = () => {
     try {
       const response = await loginUser(email, password);
       
-      toast({
-        title: "Login realizado com sucesso",
-        description: "Você será redirecionado para o dashboard.",
-      });
-      
-      // Redirecionar após login bem-sucedido
-      navigate("/dashboard");
-      console.log("Login bem-sucedido", response);
+      if (response.success) {
+        toast({
+          title: "Login realizado com sucesso",
+          description: "Bem-vindo de volta!",
+        });
+        
+        // Redirecionar para o dashboard após login bem-sucedido
+        navigate("/dashboard");
+      } else {
+        throw new Error("Falha ao fazer login");
+      }
       
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       toast({
         variant: "destructive",
         title: "Erro ao fazer login",
-        description: "Verifique suas credenciais e tente novamente.",
+        description: "Email ou senha incorretos.",
       });
     } finally {
       setIsLoading(false);

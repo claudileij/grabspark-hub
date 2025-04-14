@@ -23,9 +23,40 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Validation functions
+  const validateEmail = (email: string) => {
+    const allowedDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com"];
+    const domain = email.split("@")[1]?.toLowerCase();
+    return allowedDomains.includes(domain);
+  };
+
+  const validateUsername = (username: string) => {
+    return /^[a-z]+$/.test(username);
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate username - only lowercase letters
+    if (!validateUsername(username)) {
+      toast({
+        variant: "destructive",
+        title: "Erro de validação",
+        description: "O nome de usuário deve conter apenas letras minúsculas, sem caracteres especiais.",
+      });
+      return;
+    }
+
+    // Validate email domain
+    if (!validateEmail(email)) {
+      toast({
+        variant: "destructive",
+        title: "Erro de validação",
+        description: "Apenas emails do Gmail, Yahoo, Hotmail ou Outlook são aceitos.",
+      });
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast({
         variant: "destructive",
@@ -127,12 +158,13 @@ const Register = () => {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Seu nome de usuário"
+                  placeholder="Seu nome de usuário (apenas letras minúsculas)"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   className="bg-secondary/50"
                 />
+                <p className="text-xs text-muted-foreground">Apenas letras minúsculas, sem espaços ou caracteres especiais.</p>
               </div>
 
               <div className="space-y-2">
@@ -146,6 +178,7 @@ const Register = () => {
                   required
                   className="bg-secondary/50"
                 />
+                <p className="text-xs text-muted-foreground">Apenas emails do Gmail, Yahoo, Hotmail ou Outlook são aceitos.</p>
               </div>
 
               <div className="space-y-2">
