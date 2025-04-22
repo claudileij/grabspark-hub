@@ -12,11 +12,18 @@ import NotFound from "./pages/NotFound";
 import Pricing from "./pages/Pricing";
 import Terms from "./pages/Terms";
 import Resources from "./pages/Resources";
-import Privacy from "./pages/Privacy";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "@/components/PrivateRoute";
 
-const queryClient = new QueryClient();
+// Configure o QueryClient com tratamento de erro padrão
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutos
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,7 +39,6 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/resources" element={<Resources />} />
-          <Route path="/privacy" element={<Privacy />} />
           {/* Rota protegida */}
           <Route path="/dashboard" element={
             <PrivateRoute>

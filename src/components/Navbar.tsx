@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogIn, Cloud, LogOut, User } from "lucide-react";
+import { Menu, X, LogIn, Cloud, LogOut, User, Settings, UploadCloud, LayoutDashboard } from "lucide-react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -51,12 +58,35 @@ const Navbar = () => {
             <div className="ml-4 flex items-center space-x-2">
               {user ? (
                 <>
-                  <div className="flex items-center px-3 py-1 rounded bg-muted/40 mr-2">
-                    <User className="w-4 h-4 mr-1 text-muted-foreground" />
-                    <span className="text-sm font-medium truncate max-w-[120px]" title={user.username}>{user.username}</span>
-                    <span className="mx-2 text-muted-foreground">|</span>
-                    <span className="text-xs text-muted-foreground truncate max-w-[160px]" title={user.email}>{user.email}</span>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div className="flex items-center px-3 py-1 rounded bg-muted/40 mr-2 cursor-pointer hover:bg-muted/70 transition-colors">
+                        <User className="w-4 h-4 mr-1 text-muted-foreground" />
+                        <span className="text-sm font-medium truncate max-w-[120px]" title={user.username}>{user.username}</span>
+                        <span className="mx-2 text-muted-foreground">|</span>
+                        <span className="text-xs text-muted-foreground truncate max-w-[160px]" title={user.email}>{user.email}</span>
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        <span>Dashboard</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Configurações</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <UploadCloud className="mr-2 h-4 w-4" />
+                        <span>Upload</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Sair</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Button variant="outline" onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Sair
@@ -126,6 +156,30 @@ const Navbar = () => {
                     </span>
                     <span className="text-xs text-muted-foreground">{user.email}</span>
                   </div>
+                  <Link 
+                    to="/dashboard" 
+                    className="flex items-center text-sm px-2 py-2 hover:bg-muted/50 rounded-md"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </Link>
+                  <Link 
+                    to="#" 
+                    className="flex items-center text-sm px-2 py-2 hover:bg-muted/50 rounded-md"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Configurações
+                  </Link>
+                  <Link 
+                    to="#" 
+                    className="flex items-center text-sm px-2 py-2 hover:bg-muted/50 rounded-md"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <UploadCloud className="w-4 h-4 mr-2" />
+                    Upload
+                  </Link>
                   <Button variant="outline" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Sair
