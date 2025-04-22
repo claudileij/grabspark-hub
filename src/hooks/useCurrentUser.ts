@@ -14,26 +14,48 @@ export function useCurrentUser() {
   const [user, setUser] = useState<JwtPayload | null>(null);
 
   useEffect(() => {
-    function extractFromToken() {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return null;
-      const payload = decodeJwt<JwtPayload>(token);
-      if (!payload) return null;
-      // Checa expiração
-      if (payload.exp && Date.now() / 1000 > payload.exp) {
-        localStorage.removeItem("auth_token");
-        return null;
-      }
-      return payload;
-    }
-    setUser(extractFromToken());
+    // Check token immediately when component mounts
+    checkToken();
 
-    // Atualiza ao mudar storage (ex: outro tab faz logout)
-    function handleStorage(e: StorageEvent) {
-      if (e.key === "auth_token") {
-        setUser(extractFromToken());
+    // Function to extract user from token
+    function checkToken() {
+      const token = localStorage.getItem("auth_token");
+      
+      if (!token) {
+        setUser(null);
+        return;
+      }
+      
+      try {
+        const payload = decodeJwt<JwtPayload>(token);
+        if (!payload) {
+          localStorage.removeItem("auth_token");
+          setUser(null);
+          return;
+        }
+        
+        // Check expiration
+        if (payload.exp && Date.now() / 1000 > payload.exp) {
+          localStorage.removeItem("auth_token");
+          setUser(null);
+          return;
+        }
+        
+        setUser(payload);
+      } catch (error) {
+        console.error("Error parsing auth token:", error);
+        localStorage.removeItem("auth_token");
+        setUser(null);
       }
     }
+
+    // Update when storage changes (e.g., another tab logs out)
+    function handleStorage(e: StorageEvent) {
+      if (e.key === "auth_token" || e.key === null) {
+        checkToken();
+      }
+    }
+    
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
   }, []);

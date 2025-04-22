@@ -1,5 +1,5 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,6 +17,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
   // Se não houver usuário autenticado, redireciona para a página de login
   if (!user) {
+    // Only show toast if there was an attempted access
     toast({
       title: "Acesso negado",
       description: "Você precisa estar logado para acessar esta página.",
