@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,6 @@ const Navbar = () => {
             </div>
             <span className="text-xl font-semibold text-foreground">Flux Storage</span>
           </Link>
-          {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <Link 
               to="/" 
@@ -49,12 +47,6 @@ const Navbar = () => {
               className={`transition-colors ${isActive('/pricing') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
             >
               Preços
-            </Link>
-            <Link 
-              to="/privacy" 
-              className={`transition-colors ${isActive('/privacy') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
-            >
-              Privacidade
             </Link>
             <div className="ml-4 flex items-center space-x-2">
               {user ? (
@@ -85,7 +77,6 @@ const Navbar = () => {
               )}
             </div>
           </div>
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -102,7 +93,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-card/95 backdrop-blur-md border-b border-border animate-fade-in">
           <div className="px-4 pt-2 pb-4 space-y-1">
@@ -126,13 +116,6 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Preços
-            </Link>
-            <Link
-              to="/privacy"
-              className={`block py-2 transition-colors ${isActive('/privacy') ? 'text-primary font-medium' : 'text-foreground hover:text-primary'}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Privacidade
             </Link>
             <div className="pt-4 flex flex-col space-y-2">
               {user ? (

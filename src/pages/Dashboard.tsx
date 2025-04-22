@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Database, Calendar, LogOut, UploadCloud, FileText } from "lucide-react";
@@ -9,17 +8,19 @@ import { useToast } from "@/components/ui/use-toast";
 import Layout from "@/components/Layout";
 import { getUserInfo, UserInfo } from "@/services/userService";
 import { isAuthenticated, logoutUser } from "@/services/authService";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const user = useCurrentUser();
 
   useEffect(() => {
-    // Check if user is authenticated
-    if (!isAuthenticated()) {
-      navigate("/login");
+    // Bloqueia acesso se não autenticado
+    if (!user) {
+      navigate("/login", { replace: true });
       return;
     }
 
@@ -41,7 +42,7 @@ const Dashboard = () => {
     };
 
     fetchUserData();
-  }, [navigate, toast]);
+  }, [navigate, toast, user]); // atualiza se user mudar
 
   const handleLogout = () => {
     logoutUser();

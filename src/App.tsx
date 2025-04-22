@@ -14,6 +14,7 @@ import Terms from "./pages/Terms";
 import Resources from "./pages/Resources";
 import Privacy from "./pages/Privacy";
 import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "@/components/PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,12 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/privacy" element={<Privacy />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* Rota protegida */}
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

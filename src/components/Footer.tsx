@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Cloud } from "lucide-react";
 
@@ -87,11 +86,6 @@ const Footer = () => {
               <li>
                 <Link to="/security" className="text-muted-foreground hover:text-primary transition-colors">
                   Segurança
-                </Link>
-              </li>
-              <li>
-                <Link to="/compliance" className="text-muted-foreground hover:text-primary transition-colors">
-                  Conformidade
                 </Link>
               </li>
             </ul>
