@@ -1,6 +1,6 @@
 
-import { ReactNode, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -13,26 +13,19 @@ interface PrivateRouteProps {
  */
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const user = useCurrentUser();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
-  useEffect(() => {
-    // Verifica se o usuário está autenticado
-    if (!user) {
-      toast({
-        title: "Acesso negado",
-        description: "Você precisa estar logado para acessar esta página.",
-        variant: "destructive"
-      });
-      navigate("/login", { replace: true });
-    }
-  }, [user, navigate, toast]);
-
-  // Se não houver usuário autenticado, não renderiza nada enquanto redireciona
+  // Se não houver usuário autenticado, redireciona para a página de login
   if (!user) {
-    return null;
+    toast({
+      title: "Acesso negado",
+      description: "Você precisa estar logado para acessar esta página.",
+      variant: "destructive"
+    });
+    return <Navigate to="/login" replace />;
   }
 
+  // Se houver usuário, renderiza o conteúdo normalmente
   return <>{children}</>;
 };
 
