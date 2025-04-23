@@ -27,12 +27,10 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
-  // Initialize auth service when app starts
-  useEffect(() => {
-    initAuthService();
-  }, []);
+// Inicializar serviço de autenticação imediatamente
+initAuthService();
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

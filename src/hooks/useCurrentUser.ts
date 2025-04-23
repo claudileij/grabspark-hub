@@ -11,22 +11,36 @@ type JwtPayload = {
 };
 
 export function useCurrentUser() {
-  const [user, setUser] = useState<JwtPayload | null>(null);
+  const [user, setUser] = useState<JwtPayload | null>(() => {
+    // Perform initial token check immediately on hook initialization
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return null;
+      
+      const payload = decodeJwt<JwtPayload>(token);
+      if (!payload) return null;
+      
+      // Check token expiration
+      if (payload.exp && Date.now() / 1000 > payload.exp) return null;
+      
+      return payload;
+    } catch (error) {
+      console.error("Error parsing auth token on init:", error);
+      return null;
+    }
+  });
 
   useEffect(() => {
-    // Check token immediately when component mounts
-    checkToken();
-
     // Function to extract user from token
     function checkToken() {
-      const token = localStorage.getItem("auth_token");
-      
-      if (!token) {
-        setUser(null);
-        return;
-      }
-      
       try {
+        const token = localStorage.getItem("auth_token");
+        
+        if (!token) {
+          setUser(null);
+          return;
+        }
+        
         const payload = decodeJwt<JwtPayload>(token);
         if (!payload) {
           localStorage.removeItem("auth_token");
@@ -57,7 +71,13 @@ export function useCurrentUser() {
     }
     
     window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    // Also check periodically to catch token expiration
+    const intervalId = setInterval(checkToken, 60000); // Check every minute
+    
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      clearInterval(intervalId);
+    };
   }, []);
 
   return user;
