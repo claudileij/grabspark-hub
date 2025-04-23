@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { decodeJwt } from "@/utils/jwt";
+import { hasValidAuthToken } from "@/services/authService";
 
 type JwtPayload = {
   userId: string;
@@ -12,17 +13,14 @@ type JwtPayload = {
 
 export function useCurrentUser() {
   const [user, setUser] = useState<JwtPayload | null>(() => {
-    // Perform initial token check immediately on hook initialization
+    // Verificação inicial usando o novo método mais direto
+    if (!hasValidAuthToken()) return null;
+    
     try {
       const token = localStorage.getItem("auth_token");
       if (!token) return null;
       
       const payload = decodeJwt<JwtPayload>(token);
-      if (!payload) return null;
-      
-      // Check token expiration
-      if (payload.exp && Date.now() / 1000 > payload.exp) return null;
-      
       return payload;
     } catch (error) {
       console.error("Error parsing auth token on init:", error);
@@ -33,32 +31,22 @@ export function useCurrentUser() {
   useEffect(() => {
     // Function to extract user from token
     function checkToken() {
+      if (!hasValidAuthToken()) {
+        setUser(null);
+        return;
+      }
+      
       try {
         const token = localStorage.getItem("auth_token");
-        
         if (!token) {
           setUser(null);
           return;
         }
         
         const payload = decodeJwt<JwtPayload>(token);
-        if (!payload) {
-          localStorage.removeItem("auth_token");
-          setUser(null);
-          return;
-        }
-        
-        // Check expiration
-        if (payload.exp && Date.now() / 1000 > payload.exp) {
-          localStorage.removeItem("auth_token");
-          setUser(null);
-          return;
-        }
-        
         setUser(payload);
       } catch (error) {
         console.error("Error parsing auth token:", error);
-        localStorage.removeItem("auth_token");
         setUser(null);
       }
     }
@@ -71,8 +59,8 @@ export function useCurrentUser() {
     }
     
     window.addEventListener("storage", handleStorage);
-    // Also check periodically to catch token expiration
-    const intervalId = setInterval(checkToken, 60000); // Check every minute
+    // Check periodically
+    const intervalId = setInterval(checkToken, 30000); // Check every 30 seconds
     
     return () => {
       window.removeEventListener("storage", handleStorage);

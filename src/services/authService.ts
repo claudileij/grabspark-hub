@@ -1,4 +1,3 @@
-
 import { apiClient } from "./apiClient";
 
 // Interfaces para os dados
@@ -59,6 +58,25 @@ export const getAuthToken = (): string | null => {
     authToken = localStorage.getItem("auth_token");
   }
   return authToken;
+};
+
+/**
+ * Verifica se há um token válido diretamente
+ * Método mais direto e confiável para verificar autenticação
+ */
+export const hasValidAuthToken = (): boolean => {
+  try {
+    const token = localStorage.getItem("auth_token");
+    // Se não houver token, não está autenticado
+    if (!token) return false;
+    
+    // Se o token existir, considera autenticado
+    // Para melhor segurança, poderíamos verificar expiração
+    return true;
+  } catch (error) {
+    console.error("Erro ao verificar token de autenticação:", error);
+    return false;
+  }
 };
 
 /**

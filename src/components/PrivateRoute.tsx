@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { hasValidAuthToken } from "@/services/authService";
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -9,16 +10,16 @@ interface PrivateRouteProps {
 
 /**
  * Rota protegida: só renderiza o conteúdo se houver user autenticado via JWT.
+ * Usa método direto de verificação de token para maior confiabilidade.
  */
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const { toast } = useToast();
   
-  // Check for token directly instead of using the hook
-  const hasAuthToken = localStorage.getItem("auth_token") !== null;
+  // Usar método direto para verificar autenticação
+  const isAuthenticated = hasValidAuthToken();
 
-  // Se não houver token de autenticação, redireciona para a página de login
-  if (!hasAuthToken) {
-    // Only show toast if there was an attempted access
+  // Se não estiver autenticado, redireciona para a página de login
+  if (!isAuthenticated) {
     toast({
       title: "Acesso negado",
       description: "Você precisa estar logado para acessar esta página.",
@@ -27,7 +28,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Se houver token, renderiza o conteúdo normalmente
+  // Se estiver autenticado, renderiza o conteúdo normalmente
   return <>{children}</>;
 };
 
