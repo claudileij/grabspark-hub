@@ -23,13 +23,17 @@ export const getUploadUrl = async (fileData: FileUploadRequest): Promise<string>
 
 export const uploadFileToUrl = async (url: string, file: File): Promise<void> => {
   try {
-    await fetch(url, {
+    const response = await fetch(url, {
       method: 'PUT',
       body: file,
       headers: {
         'Content-Type': file.type,
       },
     });
+    
+    if (!response.ok) {
+      throw new Error(`Falha no upload: ${response.status} ${response.statusText}`);
+    }
   } catch (error) {
     console.error('Erro ao fazer upload do arquivo:', error);
     throw error;

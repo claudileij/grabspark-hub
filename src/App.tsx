@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -55,7 +56,13 @@ const App = () => {
               <PrivateRoute>
                 <Layout>
                   <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-2xl font-bold mb-6">Upload de Arquivos</h1>
+                    <h1 className="text-2xl font-bold mb-6">Gerenciamento de Arquivos</h1>
+                    <div className="bg-gradient-to-br from-accent/20 to-background p-6 rounded-lg mb-8">
+                      <h2 className="text-xl font-medium mb-2">Upload de Arquivos</h2>
+                      <p className="text-muted-foreground mb-4">
+                        Faça upload dos seus arquivos com segurança e rapidez.
+                      </p>
+                    </div>
                     <FileUpload />
                   </div>
                 </Layout>
