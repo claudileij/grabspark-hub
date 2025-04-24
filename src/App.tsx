@@ -14,6 +14,8 @@ import Resources from "./pages/Resources";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "@/components/PrivateRoute";
 import { initAuthService } from "@/services/authService";
+import Layout from "@/components/Layout";
+import FileUpload from "@/components/FileUpload";
 
 // Configure o QueryClient com tratamento de erro padrão
 const queryClient = new QueryClient({
@@ -47,6 +49,16 @@ const App = () => {
             <Route path="/dashboard" element={
               <PrivateRoute>
                 <Dashboard />
+              </PrivateRoute>
+            } />
+            <Route path="/upload" element={
+              <PrivateRoute>
+                <Layout>
+                  <div className="container mx-auto px-4 py-8">
+                    <h1 className="text-2xl font-bold mb-6">Upload de Arquivos</h1>
+                    <FileUpload />
+                  </div>
+                </Layout>
               </PrivateRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
