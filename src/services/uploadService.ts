@@ -11,6 +11,7 @@ interface UploadUrlResponse {
   fields: Record<string, string>;  // Campos do formulário S3, como AWSAccessKeyId, signature, etc.
 }
 
+// Função para obter a URL e os campos do formulário de upload S3 do backend
 export const getUploadUrl = async (fileData: FileUploadRequest): Promise<UploadUrlResponse> => {
   try {
     const response = await apiClient.post<UploadUrlResponse>('/files/upload', fileData);
@@ -21,6 +22,7 @@ export const getUploadUrl = async (fileData: FileUploadRequest): Promise<UploadU
   }
 };
 
+// Função para realizar o upload do arquivo para o S3
 export const uploadFileToUrl = async (
   url: string, 
   fields: Record<string, string>,  // Campos do formulário S3
