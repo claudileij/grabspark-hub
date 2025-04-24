@@ -37,7 +37,8 @@ const FileUpload = () => {
 
       // Use the progress callback from our enhanced uploadFileToUrl function
       await uploadFileToUrl(
-        uploadUrl, 
+        uploadUrl.url,
+        uploadUrl.fields,
         file, 
         (progress) => {
           setUploadProgress(progress);
