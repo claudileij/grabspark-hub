@@ -9,6 +9,14 @@ const FileUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const fileInputRef = useState<HTMLInputElement | null>(null);
+
+  const handleButtonClick = () => {
+    // Explicitly trigger the hidden file input click event
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -73,30 +81,28 @@ const FileUpload = () => {
             className="hidden"
             id="file-upload"
             disabled={isUploading}
+            ref={(input) => fileInputRef.current = input}
           />
-          <label
-            htmlFor="file-upload"
-            className="cursor-pointer w-full"
+          <Button 
+            className="w-full transition-all" 
+            disabled={isUploading}
+            variant={uploadStatus === 'success' ? "default" : "default"}
+            size="lg"
+            onClick={handleButtonClick}
+            type="button"
           >
-            <Button 
-              className="w-full transition-all" 
-              disabled={isUploading}
-              variant={uploadStatus === 'success' ? "default" : "default"}
-              size="lg"
-            >
-              {isUploading ? (
-                <>
-                  <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-2" />
-                  Enviando...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-2" />
-                  {uploadStatus === 'success' ? 'Enviar outro arquivo' : 'Selecionar arquivo'}
-                </>
-              )}
-            </Button>
-          </label>
+            {isUploading ? (
+              <>
+                <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-2" />
+                Enviando...
+              </>
+            ) : (
+              <>
+                <Upload className="mr-2" />
+                {uploadStatus === 'success' ? 'Enviar outro arquivo' : 'Selecionar arquivo'}
+              </>
+            )}
+          </Button>
         </div>
 
         <div className="mt-4 text-center">
