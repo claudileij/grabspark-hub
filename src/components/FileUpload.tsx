@@ -4,15 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Check, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { getUploadUrl, uploadFileToUrl } from "@/services/uploadService";
+import { Progress } from "@/components/ui/progress";
 
 const FileUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
-    // Explicitly trigger the hidden file input click event
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -25,23 +26,36 @@ const FileUpload = () => {
     setFileName(file.name);
     setIsUploading(true);
     setUploadStatus('idle');
+    setUploadProgress(0);
     
     try {
-      // Primeiro, obtém a URL de upload
       const uploadUrl = await getUploadUrl({
         fileName: file.name,
         fileSize: file.size,
         fileType: file.type,
       });
 
-      // Em seguida, faz o upload do arquivo
-      await uploadFileToUrl(uploadUrl, file);
+      // Simular progresso do upload
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 5;
+        });
+      }, 100);
 
+      await uploadFileToUrl(uploadUrl, file);
+      
+      clearInterval(progressInterval);
+      setUploadProgress(100);
       setUploadStatus('success');
       toast.success('Arquivo enviado com sucesso!');
     } catch (error) {
       console.error('Erro no upload:', error);
       setUploadStatus('error');
+      setUploadProgress(0);
       toast.error('Erro ao enviar arquivo. Tente novamente.');
     } finally {
       setIsUploading(false);
@@ -62,16 +76,27 @@ const FileUpload = () => {
         </div>
 
         {fileName && (
-          <div className={`mb-4 p-3 rounded-md flex items-center gap-2 ${
-            uploadStatus === 'success' ? 'bg-green-500/10 text-green-500' : 
-            uploadStatus === 'error' ? 'bg-red-500/10 text-red-500' : 
-            'bg-secondary'
-          }`}>
-            {uploadStatus === 'success' ? <Check className="h-4 w-4" /> : 
-             uploadStatus === 'error' ? <AlertCircle className="h-4 w-4" /> : 
-             <FileUp className="h-4 w-4" />}
-            <span className="text-sm truncate">{fileName}</span>
-          </div>
+          <>
+            <div className={`mb-4 p-3 rounded-md flex items-center gap-2 ${
+              uploadStatus === 'success' ? 'bg-green-500/10 text-green-500' : 
+              uploadStatus === 'error' ? 'bg-red-500/10 text-red-500' : 
+              'bg-secondary'
+            }`}>
+              {uploadStatus === 'success' ? <Check className="h-4 w-4" /> : 
+               uploadStatus === 'error' ? <AlertCircle className="h-4 w-4" /> : 
+               <FileUp className="h-4 w-4" />}
+              <span className="text-sm truncate">{fileName}</span>
+            </div>
+            
+            {isUploading && (
+              <div className="mb-4">
+                <Progress value={uploadProgress} className="h-2" />
+                <p className="text-sm text-muted-foreground mt-1 text-center">
+                  {uploadProgress}%
+                </p>
+              </div>
+            )}
+          </>
         )}
 
         <div className="flex justify-center">
