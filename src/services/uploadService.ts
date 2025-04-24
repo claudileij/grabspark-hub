@@ -15,7 +15,7 @@ interface UploadUrlResponse {
 export const getUploadUrl = async (fileData: FileUploadRequest): Promise<UploadUrlResponse> => {
   try {
     const response = await apiClient.post<UploadUrlResponse>('/files/upload', fileData);
-    return response.data;  // Retorna a URL e os campos do formulário S3
+    return response;  // Retorna a URL e os campos do formulário S3
   } catch (error) {
     console.error('Erro ao obter URL de upload:', error);
     throw error;
