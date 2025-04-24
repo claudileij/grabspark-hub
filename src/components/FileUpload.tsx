@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Check, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -9,7 +9,7 @@ const FileUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const fileInputRef = useState<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
     // Explicitly trigger the hidden file input click event
@@ -81,7 +81,7 @@ const FileUpload = () => {
             className="hidden"
             id="file-upload"
             disabled={isUploading}
-            ref={(input) => fileInputRef.current = input}
+            ref={fileInputRef}
           />
           <Button 
             className="w-full transition-all" 
