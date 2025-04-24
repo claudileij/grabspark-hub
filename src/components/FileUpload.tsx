@@ -5,7 +5,7 @@ import { Upload } from "lucide-react";
 import { toast } from "sonner";
 import { getUploadUrl, uploadFileToUrl } from "@/services/uploadService";
 
-export const FileUpload = () => {
+const FileUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,3 +54,5 @@ export const FileUpload = () => {
     </div>
   );
 };
+
+export default FileUpload;
