@@ -35,20 +35,17 @@ const FileUpload = () => {
         fileType: file.type,
       });
 
-      // Simular progresso do upload
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 95) {
-            clearInterval(progressInterval);
-            return prev;
-          }
-          return prev + 5;
-        });
-      }, 100);
-
-      await uploadFileToUrl(uploadUrl, file);
+      // Use the progress callback from our enhanced uploadFileToUrl function
+      await uploadFileToUrl(
+        uploadUrl, 
+        file, 
+        (progress) => {
+          setUploadProgress(progress);
+          console.log(`Upload progress: ${progress}%`);
+        }
+      );
       
-      clearInterval(progressInterval);
+      // Ensure we set 100% when complete
       setUploadProgress(100);
       setUploadStatus('success');
       toast.success('Arquivo enviado com sucesso!');
@@ -59,6 +56,10 @@ const FileUpload = () => {
       toast.error('Erro ao enviar arquivo. Tente novamente.');
     } finally {
       setIsUploading(false);
+      // Reset file input so the same file can be uploaded again if needed
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -88,9 +89,14 @@ const FileUpload = () => {
               <span className="text-sm truncate">{fileName}</span>
             </div>
             
-            {isUploading && (
+            {(isUploading || uploadStatus === 'success') && (
               <div className="mb-4">
-                <Progress value={uploadProgress} className="h-2" />
+                <Progress 
+                  value={uploadProgress} 
+                  className={`h-2 ${
+                    uploadStatus === 'success' ? 'bg-green-100' : ''
+                  }`} 
+                />
                 <p className="text-sm text-muted-foreground mt-1 text-center">
                   {uploadProgress}%
                 </p>
@@ -119,7 +125,7 @@ const FileUpload = () => {
             {isUploading ? (
               <>
                 <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-2" />
-                Enviando...
+                Enviando ({uploadProgress}%)
               </>
             ) : (
               <>
