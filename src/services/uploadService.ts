@@ -38,8 +38,8 @@ export const uploadFileToUrl = async (
       formData.append(key, value);
     });
 
-    // Adicionar o arquivo
-    formData.append('file', file);
+    // Adicionar o arquivo binário
+    formData.append('file', file); // 'file' é o nome do campo para o arquivo no formulário S3
 
     // Criar um XMLHttpRequest para enviar o FormData e monitorar o progresso
     const xhr = new XMLHttpRequest();
@@ -71,7 +71,7 @@ export const uploadFileToUrl = async (
 
     // Enviar o formulário via POST
     xhr.open('POST', url);
-    xhr.send(formData);  // Envia o FormData com o arquivo e os campos
+    xhr.send(formData);  // Envia o FormData com o arquivo binário e os campos
 
     return uploadPromise;
   } catch (error) {
