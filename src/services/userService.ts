@@ -30,6 +30,10 @@ export interface BucketFile {
   uploadDate?: string; // ISO string timestamp
 }
 
+export interface BucketFilesResponse {
+  bucketFiles: BucketFile[];
+}
+
 /**
  * Get the current user's information including bucket details
  */
@@ -97,7 +101,7 @@ export const getFilesData = async (): Promise<FilesData> => {
 /**
  * Get all files from the user's bucket
  */
-export const getBucketFiles = async (): Promise<BucketFile[]> => {
+export const getBucketFiles = async (): Promise<BucketFilesResponse> => {
   // Ensure we have a token
   const token = getAuthToken();
   if (!token) {
@@ -110,49 +114,51 @@ export const getBucketFiles = async (): Promise<BucketFile[]> => {
     
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve([
-          {
-            fileName: "documento",
-            fileExtension: "pdf",
-            mimeType: "application/pdf",
-            fileSize: 245, // 245KB
-            uploadDate: "2025-04-25T14:22:31.953Z"
-          },
-          {
-            fileName: "imagem",
-            fileExtension: "jpg",
-            mimeType: "image/jpeg",
-            fileSize: 1024, // 1MB
-            uploadDate: "2025-04-26T10:15:22.953Z"
-          },
-          {
-            fileName: "planilha",
-            fileExtension: "xlsx",
-            mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            fileSize: 512, // 512KB
-            uploadDate: "2025-04-24T09:45:12.953Z"
-          },
-          {
-            fileName: "apresentacao",
-            fileExtension: "pptx",
-            mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-            fileSize: 780, // 780KB
-            uploadDate: "2025-04-23T16:30:45.953Z"
-          },
-          {
-            fileName: "texto",
-            fileExtension: "txt",
-            mimeType: "text/plain",
-            fileSize: 5, // 5KB
-            uploadDate: "2025-04-27T08:12:33.953Z"
-          }
-        ]);
+        resolve({
+          bucketFiles: [
+            {
+              fileName: "documento",
+              fileExtension: "pdf",
+              mimeType: "application/pdf",
+              fileSize: 245, // 245KB
+              uploadDate: "2025-04-25T14:22:31.953Z"
+            },
+            {
+              fileName: "imagem",
+              fileExtension: "jpg",
+              mimeType: "image/jpeg",
+              fileSize: 1024, // 1MB
+              uploadDate: "2025-04-26T10:15:22.953Z"
+            },
+            {
+              fileName: "planilha",
+              fileExtension: "xlsx",
+              mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              fileSize: 512, // 512KB
+              uploadDate: "2025-04-24T09:45:12.953Z"
+            },
+            {
+              fileName: "apresentacao",
+              fileExtension: "pptx",
+              mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+              fileSize: 780, // 780KB
+              uploadDate: "2025-04-23T16:30:45.953Z"
+            },
+            {
+              fileName: "texto",
+              fileExtension: "txt",
+              mimeType: "text/plain",
+              fileSize: 5, // 5KB
+              uploadDate: "2025-04-27T08:12:33.953Z"
+            }
+          ]
+        });
       }, 1200);
     });
   }
   
   // Real implementation for production
-  return await apiClient.get<BucketFile[]>('/files');
+  return await apiClient.get<BucketFilesResponse>('/files');
 };
 
 /**
