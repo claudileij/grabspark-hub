@@ -12,7 +12,7 @@ const PricingPage = () => {
       name: "Gratuito",
       price: "R$0,00",
       period: "mês",
-      description: "Para experimentar o serviço",
+      description: "Ideal para testar o serviço sem compromisso.",
       storage: "10 GB",
       cdn: "1 GB",
       maxFileSize: "256 MB",
@@ -31,12 +31,13 @@ const PricingPage = () => {
       name: "Pro",
       price: "R$34,90",
       period: "mês",
-      description: "V - Tudo do Gratuito",
+      description: "Perfeito para desenvolvedores que precisam de mais controle e recursos.",
       storage: "500 GB",
       cdn: "400 GB",
       maxFileSize: "5 GB",
       expiration: "Personalizável",
       features: [
+        { name: "Tudo do gratuito", included: true }
         { name: "Expiração configurável", included: true },
         { name: "Links personalizáveis", included: true },
         { name: "Acesso via API", included: true },
@@ -50,12 +51,13 @@ const PricingPage = () => {
       name: "Turbo",
       price: "R$74,90",
       period: "mês",
-      description: "V - Tudo do Pro",
+      description: "Feito para equipes ou profissionais que lidam com grandes volumes de dados.",
       storage: "1 TB",
       cdn: "800 GB",
       maxFileSize: "10 GB",
       expiration: "Personalizável",
       features: [
+        { name: "Tudo do Pro", included: true }
         { name: "Webhooks", included: true },
         { name: "Analytics avançado", included: true },
       ],
@@ -67,12 +69,13 @@ const PricingPage = () => {
       name: "Ultra",
       price: "R$149,90",
       period: "mês",
-      description: "V - Tudo do Turbo",
+      description: "A escolha definitiva para empresas e usuários que exigem o máximo desempenho.",
       storage: "5 TB",
       cdn: "4 TB",
       maxFileSize: "20 GB",
       expiration: "Personalizável",
       features: [
+        { name: "Tudo do Turbo", included: true }
         { name: "Suporte prioritário", included: true },
       ],
       popular: false,
