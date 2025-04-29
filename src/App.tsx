@@ -17,6 +17,7 @@ import PrivateRoute from "@/components/PrivateRoute";
 import { initAuthService } from "@/services/authService";
 import Layout from "@/components/Layout";
 import FileUpload from "@/components/FileUpload";
+import FilesPage from "@/pages/FilesPage";
 
 // Configure o QueryClient com tratamento de erro padrão
 const queryClient = new QueryClient({
@@ -46,7 +47,8 @@ const App = () => {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/resources" element={<Resources />} />
-            {/* Rota protegida */}
+            
+            {/* Rotas protegidas */}
             <Route path="/dashboard" element={
               <PrivateRoute>
                 <Dashboard />
@@ -68,6 +70,12 @@ const App = () => {
                 </Layout>
               </PrivateRoute>
             } />
+            <Route path="/files" element={
+              <PrivateRoute>
+                <FilesPage />
+              </PrivateRoute>
+            } />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

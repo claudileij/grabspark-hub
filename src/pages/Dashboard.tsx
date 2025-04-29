@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Database, Calendar, UploadCloud, FileText } from "lucide-react";
+import { User, Database, FileText, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -15,7 +15,8 @@ const Dashboard = () => {
   const { toast } = useToast();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [filesData, setFilesData] = useState<FilesData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const [isLoadingFiles, setIsLoadingFiles] = useState(true);
   const user = useCurrentUser();
 
   useEffect(() => {
@@ -25,29 +26,42 @@ const Dashboard = () => {
       return;
     }
 
-    // Fetch user data
-    const fetchData = async () => {
+    // Fetch user data independently
+    const fetchUserInfo = async () => {
       try {
-        const [userData, files] = await Promise.all([
-          getUserInfo(),
-          getFilesData()
-        ]);
-        
+        const userData = await getUserInfo();
         setUserInfo(userData);
-        setFilesData(files);
       } catch (error) {
-        console.error("Erro ao carregar dados:", error);
+        console.error("Erro ao carregar dados do usuário:", error);
         toast({
           variant: "destructive",
           title: "Erro ao carregar dados",
           description: "Não foi possível carregar as informações do usuário.",
         });
       } finally {
-        setIsLoading(false);
+        setIsLoadingUser(false);
       }
     };
 
-    fetchData();
+    // Fetch files data independently
+    const fetchFilesData = async () => {
+      try {
+        const files = await getFilesData();
+        setFilesData(files);
+      } catch (error) {
+        console.error("Erro ao carregar dados de arquivos:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar dados",
+          description: "Não foi possível carregar as informações de arquivos.",
+        });
+      } finally {
+        setIsLoadingFiles(false);
+      }
+    };
+
+    fetchUserInfo();
+    fetchFilesData();
   }, [navigate, toast, user]); // atualiza se user mudar
 
   const formatDate = (dateString: string) => {
@@ -78,18 +92,6 @@ const Dashboard = () => {
     navigate("/files");
   };
 
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-8 md:py-16">
-          <div className="text-center">
-            <p>Carregando dados do usuário...</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 md:py-16">
@@ -106,26 +108,32 @@ const Dashboard = () => {
                 Informações do usuário
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Nome de usuário</p>
-                  <p className="font-medium">{userInfo?.username}</p>
+            {isLoadingUser ? (
+              <CardContent className="flex justify-center py-6">
+                <p className="text-muted-foreground">Carregando informações do usuário...</p>
+              </CardContent>
+            ) : (
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Nome de usuário</p>
+                    <p className="font-medium">{userInfo?.username}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="font-medium">{userInfo?.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">ID da conta</p>
+                    <p className="font-medium text-xs truncate">{userInfo?.id}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Criado em</p>
+                    <p className="font-medium">{userInfo?.createdAt ? formatDate(userInfo.createdAt) : "-"}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium">{userInfo?.email}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">ID da conta</p>
-                  <p className="font-medium text-xs truncate">{userInfo?.id}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Criado em</p>
-                  <p className="font-medium">{userInfo?.createdAt ? formatDate(userInfo.createdAt) : "-"}</p>
-                </div>
-              </div>
-            </CardContent>
+              </CardContent>
+            )}
           </Card>
 
           {/* Ações rápidas */}
@@ -154,7 +162,11 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {userInfo?.bucket?.hasBucket ? (
+              {isLoadingFiles ? (
+                <div className="flex justify-center py-6">
+                  <p className="text-muted-foreground">Carregando informações do bucket...</p>
+                </div>
+              ) : userInfo?.bucket?.hasBucket ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-secondary/20 p-4 rounded-lg">
                     <p className="text-sm text-muted-foreground">Nome do bucket</p>
