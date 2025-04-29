@@ -163,7 +163,7 @@ const FilesPage = () => {
                             {getFileIcon(file.fileExtension)}
                           </div>
                           <span className="font-medium">
-                            {file.fileName}.{file.fileExtension}
+                            {file.fileName}
                           </span>
                         </div>
                       </TableCell>
