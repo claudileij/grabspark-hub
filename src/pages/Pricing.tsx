@@ -37,7 +37,7 @@ const PricingPage = () => {
       maxFileSize: "5 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do gratuito", included: true }
+        { name: "Tudo do gratuito", included: true },
         { name: "Expiração configurável", included: true },
         { name: "Links personalizáveis", included: true },
         { name: "Acesso via API", included: true },
@@ -57,9 +57,8 @@ const PricingPage = () => {
       maxFileSize: "10 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do Pro", included: true }
-        { name: "Webhooks", included: true },
-        { name: "Analytics avançado", included: true },
+        { name: "Tudo do Pro", included: true },
+        { name: "Suporte prioritário", included: false },
       ],
       popular: false,
       buttonText: "Assinar Turbo",
@@ -75,7 +74,7 @@ const PricingPage = () => {
       maxFileSize: "20 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do Turbo", included: true }
+        { name: "Tudo do Turbo", included: true },
         { name: "Suporte prioritário", included: true },
       ],
       popular: false,
@@ -220,26 +219,6 @@ const PricingPage = () => {
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-password`} className="text-center">
                       {plan.name === "Pro" || plan.name === "Turbo" || plan.name === "Ultra" ? 
-                        <Check className="h-4 w-4 text-primary mx-auto" /> : 
-                        <X className="h-4 w-4 text-muted-foreground mx-auto" />}
-                    </TableCell>
-                  ))}
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Webhooks</TableCell>
-                  {pricingPlans.map((plan) => (
-                    <TableCell key={`${plan.name}-webhooks`} className="text-center">
-                      {plan.name === "Turbo" || plan.name === "Ultra" ? 
-                        <Check className="h-4 w-4 text-primary mx-auto" /> : 
-                        <X className="h-4 w-4 text-muted-foreground mx-auto" />}
-                    </TableCell>
-                  ))}
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Analytics avançado</TableCell>
-                  {pricingPlans.map((plan) => (
-                    <TableCell key={`${plan.name}-analytics`} className="text-center">
-                      {plan.name === "Turbo" || plan.name === "Ultra" ? 
                         <Check className="h-4 w-4 text-primary mx-auto" /> : 
                         <X className="h-4 w-4 text-muted-foreground mx-auto" />}
                     </TableCell>
