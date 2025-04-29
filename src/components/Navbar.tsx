@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -76,7 +77,7 @@ const Navbar = () => {
                         <Settings className="mr-2 h-4 w-4" />
                         <span>Configurações</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/upload")}>
                         <UploadCloud className="mr-2 h-4 w-4" />
                         <span>Upload</span>
                       </DropdownMenuItem>
@@ -173,7 +174,7 @@ const Navbar = () => {
                     Configurações
                   </Link>
                   <Link 
-                    to="#" 
+                    to="/upload" 
                     className="flex items-center text-sm px-2 py-2 hover:bg-muted/50 rounded-md"
                     onClick={() => setIsMenuOpen(false)}
                   >

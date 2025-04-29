@@ -1,19 +1,20 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Database, Calendar, LogOut, UploadCloud, FileText } from "lucide-react";
+import { User, Database, Calendar, UploadCloud, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import Layout from "@/components/Layout";
-import { getUserInfo, UserInfo } from "@/services/userService";
-import { isAuthenticated, logoutUser } from "@/services/authService";
+import { getUserInfo, UserInfo, getFilesData, FilesData } from "@/services/userService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [filesData, setFilesData] = useState<FilesData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const user = useCurrentUser();
 
@@ -25,12 +26,17 @@ const Dashboard = () => {
     }
 
     // Fetch user data
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getUserInfo();
-        setUserInfo(data);
+        const [userData, files] = await Promise.all([
+          getUserInfo(),
+          getFilesData()
+        ]);
+        
+        setUserInfo(userData);
+        setFilesData(files);
       } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
+        console.error("Erro ao carregar dados:", error);
         toast({
           variant: "destructive",
           title: "Erro ao carregar dados",
@@ -41,17 +47,8 @@ const Dashboard = () => {
       }
     };
 
-    fetchUserData();
+    fetchData();
   }, [navigate, toast, user]); // atualiza se user mudar
-
-  const handleLogout = () => {
-    logoutUser();
-    navigate("/login");
-    toast({
-      title: "Logout efetuado",
-      description: "Você foi desconectado da sua conta.",
-    });
-  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -67,10 +64,18 @@ const Dashboard = () => {
   const formatSize = (sizeInBytes: number) => {
     if (sizeInBytes === 0) return "0 B";
     
-    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const sizes = ["B", "KB", "MB", "GB", "TB", "PB"];
     const i = Math.floor(Math.log(sizeInBytes) / Math.log(1024));
     
     return parseFloat((sizeInBytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
+  };
+
+  const handleUploadClick = () => {
+    navigate("/upload");
+  };
+
+  const handleViewFilesClick = () => {
+    navigate("/files");
   };
 
   if (isLoading) {
@@ -90,10 +95,6 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sair
-          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -133,11 +134,11 @@ const Dashboard = () => {
               <CardTitle>Ações rápidas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full justify-start" variant="outline">
+              <Button className="w-full justify-start" variant="outline" onClick={handleUploadClick}>
                 <UploadCloud className="mr-2 h-4 w-4" />
                 Fazer upload
               </Button>
-              <Button className="w-full justify-start" variant="outline">
+              <Button className="w-full justify-start" variant="outline" onClick={handleViewFilesClick}>
                 <FileText className="mr-2 h-4 w-4" />
                 Ver arquivos
               </Button>
@@ -161,11 +162,13 @@ const Dashboard = () => {
                   </div>
                   <div className="bg-secondary/20 p-4 rounded-lg">
                     <p className="text-sm text-muted-foreground">Quantidade de arquivos</p>
-                    <p className="text-lg font-medium">{userInfo.bucket.objectsAmount}</p>
+                    <p className="text-lg font-medium">{filesData?.objectsAmount || userInfo.bucket.objectsAmount}</p>
                   </div>
                   <div className="bg-secondary/20 p-4 rounded-lg">
                     <p className="text-sm text-muted-foreground">Espaço utilizado</p>
-                    <p className="text-lg font-medium">{formatSize(userInfo.bucket.bucketSize)}</p>
+                    <p className="text-lg font-medium">
+                      {formatSize(filesData?.bucketSize || userInfo.bucket.bucketSize)}
+                    </p>
                   </div>
                 </div>
               ) : (
