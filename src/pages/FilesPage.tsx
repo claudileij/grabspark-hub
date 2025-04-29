@@ -38,8 +38,9 @@ const FilesPage = () => {
 
     const fetchFiles = async () => {
       try {
-        const filesDataRaw = await getBucketFiles();
-        const filesData = filesDataRaw.bucketFiles;
+        // Update this line - getBucketFiles already returns BucketFile[]
+        const filesData = await getBucketFiles();
+        
         // Ensure filesData is an array before setting it
         setFiles(Array.isArray(filesData) ? filesData : []);
         
