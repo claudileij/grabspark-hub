@@ -39,10 +39,18 @@ const FilesPage = () => {
     const fetchFiles = async () => {
       try {
         const filesData = await getBucketFiles();
-        setFiles(filesData);
+        // Ensure filesData is an array before setting it
+        setFiles(Array.isArray(filesData) ? filesData : []);
+        
+        // If we got data but it's not an array, we should log an error
+        if (filesData && !Array.isArray(filesData)) {
+          console.error("Expected array of files but got:", filesData);
+          toast.error("Formato de dados inválido ao carregar arquivos");
+        }
       } catch (error) {
         console.error("Erro ao carregar arquivos:", error);
         toast.error("Não foi possível carregar seus arquivos");
+        setFiles([]);
       } finally {
         setIsLoading(false);
       }
@@ -146,7 +154,7 @@ const FilesPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {files.map((file, index) => (
+                  {files && Array.isArray(files) ? files.map((file, index) => (
                     <TableRow key={index} className="hover:bg-accent/10">
                       <TableCell>
                         <div className="flex items-center">
@@ -193,7 +201,13 @@ const FilesPage = () => {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-4">
+                        Erro ao processar a lista de arquivos
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -205,4 +219,3 @@ const FilesPage = () => {
 };
 
 export default FilesPage;
-
