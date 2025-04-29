@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { File, FileText, FileImage, FileSpreadsheet, FilePresentation, MoreHorizontal, Trash2, Loader } from "lucide-react";
+import { File, FileText, FileImage, FileSpreadsheet, Presentation, MoreHorizontal, Trash2, Loader } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { BucketFile, getBucketFiles, deleteFile } from "@/services/userService";
@@ -82,7 +82,7 @@ const FilesPage = () => {
     } else if (["xls", "xlsx", "csv"].includes(extension)) {
       return <FileSpreadsheet className="h-5 w-5 text-green-500" />;
     } else if (["ppt", "pptx"].includes(extension)) {
-      return <FilePresentation className="h-5 w-5 text-orange-500" />;
+      return <Presentation className="h-5 w-5 text-orange-500" />;
     }
     
     return <File className="h-5 w-5 text-gray-500" />;
@@ -205,3 +205,4 @@ const FilesPage = () => {
 };
 
 export default FilesPage;
+
