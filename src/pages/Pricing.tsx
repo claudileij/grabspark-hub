@@ -1,4 +1,3 @@
-
 import { Check, X } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -9,10 +8,10 @@ import { Link } from "react-router-dom";
 const PricingPage = () => {
   const pricingPlans = [
     {
-      name: "Gratuito",
-      price: "R$0,00",
+      name: "Tester",
+      price: "R$5,99",
       period: "mês",
-      description: "Ideal para testar o serviço sem compromisso.",
+      description: "Ideal para testar o serviço com baixo investimento.",
       storage: "10 GB",
       cdn: "1 GB",
       maxFileSize: "256 MB",
@@ -24,8 +23,8 @@ const PricingPage = () => {
         { name: "Estatísticas básicas", included: true },
       ],
       popular: false,
-      buttonText: "Começar grátis",
-      buttonLink: "/register",
+      buttonText: "Assinar Tester",
+      buttonLink: "/register?plan=tester",
     },
     {
       name: "Pro",
@@ -37,7 +36,7 @@ const PricingPage = () => {
       maxFileSize: "5 GB",
       expiration: "Personalizável",
       features: [
-        { name: "Tudo do gratuito", included: true },
+        { name: "Tudo do Tester", included: true },
         { name: "Expiração configurável", included: true },
         { name: "Links personalizáveis", included: true },
         { name: "Acesso via API", included: true },
@@ -244,7 +243,7 @@ const PricingPage = () => {
           <h2 className="text-2xl font-bold mb-4">Termos de Uso</h2>
           <div className="space-y-4 text-sm">
             <p>
-              1. É proibida a criação de múltiplas contas com o objetivo de burlar os limites do plano gratuito ou obter vantagens indevidas.
+              1. É proibida a criação de múltiplas contas com o objetivo de burlar os limites do plano Tester ou obter vantagens indevidas.
             </p>
             <p>
               2. Detecção de comportamento abusivo como uso automatizado para mineração de arquivos ou replicação massiva de conteúdo poderá resultar em suspensão da conta.
