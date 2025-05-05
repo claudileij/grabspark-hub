@@ -1,3 +1,4 @@
+
 import { Check, X } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,6 @@ const PricingPage = () => {
       period: "mês",
       description: "Ideal para testar o serviço com baixo investimento.",
       storage: "10 GB",
-      cdn: "1 GB",
       maxFileSize: "256 MB",
       expiration: "24 horas",
       features: [
@@ -32,7 +32,6 @@ const PricingPage = () => {
       period: "mês",
       description: "Perfeito para desenvolvedores que precisam de mais controle e recursos.",
       storage: "500 GB",
-      cdn: "400 GB",
       maxFileSize: "5 GB",
       expiration: "Personalizável",
       features: [
@@ -52,7 +51,6 @@ const PricingPage = () => {
       period: "mês",
       description: "Feito para equipes ou profissionais que lidam com grandes volumes de dados.",
       storage: "1 TB",
-      cdn: "800 GB",
       maxFileSize: "10 GB",
       expiration: "Personalizável",
       features: [
@@ -69,7 +67,6 @@ const PricingPage = () => {
       period: "mês",
       description: "A escolha definitiva para empresas e usuários que exigem o máximo desempenho.",
       storage: "5 TB",
-      cdn: "4 TB",
       maxFileSize: "20 GB",
       expiration: "Personalizável",
       features: [
@@ -113,12 +110,8 @@ const PricingPage = () => {
                 <div className="space-y-4">
                   <div className="border rounded-md p-3 bg-muted/30">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">Armazenamento</span>
+                      <span className="text-sm font-medium">Armazenamento Total</span>
                       <span className="font-semibold">{plan.storage}</span>
-                    </div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">CDN (armazenamento)</span>
-                      <span className="font-semibold">{plan.cdn}</span>
                     </div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium">Tamanho máx.</span>
@@ -176,14 +169,6 @@ const PricingPage = () => {
                   {pricingPlans.map((plan) => (
                     <TableCell key={`${plan.name}-storage`} className="text-center">
                       {plan.storage}
-                    </TableCell>
-                  ))}
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">CDN (armazenamento)</TableCell>
-                  {pricingPlans.map((plan) => (
-                    <TableCell key={`${plan.name}-cdn`} className="text-center">
-                      {plan.cdn}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -258,7 +243,7 @@ const PricingPage = () => {
               5. O armazenamento gratuito é uma oferta promocional e pode ser alterado ou removido conforme a sustentabilidade do serviço.
             </p>
             <p>
-              6. A CDN é destinada para visualização e acesso rápido de arquivos em apps e sistemas. Não é permitida sua utilização como espelho de alto tráfego contínuo.
+              6. Todo o armazenamento do plano pode ser utilizado tanto para armazenamento regular quanto para CDN para visualização e acesso rápido de arquivos em apps e sistemas.
             </p>
           </div>
           <div className="mt-4">
@@ -273,9 +258,9 @@ const PricingPage = () => {
           <h2 className="text-3xl font-bold text-center mb-8">Perguntas Frequentes</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="p-6 border rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">Como funciona o limite de CDN?</h3>
+              <h3 className="text-xl font-semibold mb-2">Como funciona o armazenamento?</h3>
               <p className="text-muted-foreground">
-                O limite de CDN refere-se à quantidade de armazenamento disponível para visualização online dos seus arquivos, não à quantidade de acessos. Este limite é separado do seu armazenamento principal.
+                O armazenamento do seu plano pode ser usado tanto para arquivos regulares quanto para distribuição via CDN. Não há separação entre os limites - você decide como utilizar seu espaço total.
               </p>
             </div>
             <div className="p-6 border rounded-lg">
@@ -287,7 +272,7 @@ const PricingPage = () => {
             <div className="p-6 border rounded-lg">
               <h3 className="text-xl font-semibold mb-2">O que acontece se eu exceder meus limites?</h3>
               <p className="text-muted-foreground">
-                Se você exceder o limite de armazenamento, novos uploads serão temporariamente bloqueados. Se exceder o limite de CDN, a distribuição via CDN será pausada até o próximo ciclo, mas os downloads diretos continuarão funcionando.
+                Se você exceder o limite de armazenamento, novos uploads serão temporariamente bloqueados até que você libere espaço ou faça upgrade para um plano com mais capacidade.
               </p>
             </div>
             <div className="p-6 border rounded-lg">
