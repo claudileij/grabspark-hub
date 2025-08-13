@@ -40,15 +40,12 @@ const FilesPage = () => {
       try {
         const response = await getBucketFiles();
         
-        // Access the bucketFiles property from the response
-        const filesData = response.bucketFiles;
-        
-        // Ensure filesData is an array before setting it
-        setFiles(Array.isArray(filesData) ? filesData : []);
+        // The response is now directly an array of files
+        setFiles(Array.isArray(response) ? response : []);
         
         // If we got data but it's not an array, we should log an error
-        if (filesData && !Array.isArray(filesData)) {
-          console.error("Expected array of files but got:", filesData);
+        if (response && !Array.isArray(response)) {
+          console.error("Expected array of files but got:", response);
           toast.error("Formato de dados inválido ao carregar arquivos");
         }
       } catch (error) {
@@ -63,11 +60,11 @@ const FilesPage = () => {
     fetchFiles();
   }, [navigate, user]);
 
-  const formatFileSize = (sizeInKB: number) => {
-    if (sizeInKB < 1) return "0 KB";
+  const formatFileSize = (sizeInBytes: number) => {
+    if (sizeInBytes === 0) return "0 B";
     
-    const units = ["KB", "MB", "GB", "TB", "PB"];
-    let size = sizeInKB;
+    const units = ["B", "KB", "MB", "GB", "TB", "PB"];
+    let size = sizeInBytes;
     let unitIndex = 0;
     
     while (size >= 1024 && unitIndex < units.length - 1) {
@@ -84,8 +81,8 @@ const FilesPage = () => {
     return format(date, "dd/MM/yyyy 'às' HH:mm");
   };
   
-  const getFileIcon = (fileExtension: string) => {
-    const extension = fileExtension.toLowerCase();
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
     
     if (["jpg", "jpeg", "png", "gif", "svg", "webp"].includes(extension)) {
       return <FileImage className="h-5 w-5 text-blue-500" />;
@@ -100,15 +97,12 @@ const FilesPage = () => {
     return <File className="h-5 w-5 text-gray-500" />;
   };
 
-  const handleDeleteFile = async (fileName: string, fileExtension: string) => {
-    const fileId = `${fileName}.${fileExtension}`;
+  const handleDeleteFile = async (fileId: string) => {
     setDeletingFile(fileId);
     
     try {
-      await deleteFile(fileName, fileExtension);
-      setFiles(files.filter(file => 
-        `${file.fileName}.${file.fileExtension}` !== fileId
-      ));
+      await deleteFile(fileId);
+      setFiles(files.filter(file => file._id !== fileId));
       toast.success("Arquivo excluído com sucesso");
     } catch (error) {
       console.error("Erro ao excluir arquivo:", error);
@@ -163,7 +157,7 @@ const FilesPage = () => {
                       <TableCell>
                         <div className="flex items-center">
                           <div className="mr-2">
-                            {getFileIcon(file.fileExtension)}
+                            {getFileIcon(file.fileName)}
                           </div>
                           <span className="font-medium">
                             {file.fileName}
@@ -174,7 +168,7 @@ const FilesPage = () => {
                         {file.mimeType}
                       </TableCell>
                       <TableCell>{formatFileSize(file.fileSize)}</TableCell>
-                      <TableCell>{formatDate(file.uploadDate)}</TableCell>
+                      <TableCell>{formatDate(file.createdAt)}</TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -185,11 +179,11 @@ const FilesPage = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
                             <DropdownMenuItem
-                              onClick={() => handleDeleteFile(file.fileName, file.fileExtension)}
+                              onClick={() => handleDeleteFile(file._id)}
                               className="text-destructive focus:text-destructive"
-                              disabled={deletingFile === `${file.fileName}.${file.fileExtension}`}
+                              disabled={deletingFile === file._id}
                             >
-                              {deletingFile === `${file.fileName}.${file.fileExtension}` ? (
+                              {deletingFile === file._id ? (
                                 <>
                                   <Loader className="h-4 w-4 mr-2 animate-spin" />
                                   Excluindo...

@@ -10,11 +10,13 @@ export interface BucketInfo {
 }
 
 export interface UserInfo {
-  id: string;
+  _id: string;
   username: string;
   email: string;
   bucket: BucketInfo;
+  isVerified: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface FilesData {
@@ -23,16 +25,17 @@ export interface FilesData {
 }
 
 export interface BucketFile {
+  _id: string;
+  ownerId: string;
   fileName: string;
-  fileExtension: string;
+  fileKey: string;
+  fileSize: number; // In bytes
   mimeType: string;
-  fileSize: number; // In KB
-  uploadDate?: string; // ISO string timestamp
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface BucketFilesResponse {
-  bucketFiles: BucketFile[];
-}
+export type BucketFilesResponse = BucketFile[];
 
 /**
  * Get the current user's information including bucket details
@@ -51,7 +54,7 @@ export const getUserInfo = async (): Promise<UserInfo> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
-          id: "6loNLyiJmj4bIaWTH9cwn",
+          _id: "6loNLyiJmj4bIaWTH9cwn",
           username: "claudilei",
           email: "claudileijunior01@gmail.com",
           bucket: {
@@ -60,7 +63,9 @@ export const getUserInfo = async (): Promise<UserInfo> => {
             objectsAmount: 0,
             bucketSize: 0.0
           },
+          isVerified: true,
           createdAt: "2025-04-14T02:41:16.953Z",
+          updatedAt: "2025-04-14T02:41:16.953Z",
         });
       }, 800);
     });
@@ -114,45 +119,58 @@ export const getBucketFiles = async (): Promise<BucketFilesResponse> => {
     
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({
-          bucketFiles: [
-            {
-              fileName: "documento",
-              fileExtension: "pdf",
-              mimeType: "application/pdf",
-              fileSize: 245, // 245KB
-              uploadDate: "2025-04-25T14:22:31.953Z"
-            },
-            {
-              fileName: "imagem",
-              fileExtension: "jpg",
-              mimeType: "image/jpeg",
-              fileSize: 1024, // 1MB
-              uploadDate: "2025-04-26T10:15:22.953Z"
-            },
-            {
-              fileName: "planilha",
-              fileExtension: "xlsx",
-              mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-              fileSize: 512, // 512KB
-              uploadDate: "2025-04-24T09:45:12.953Z"
-            },
-            {
-              fileName: "apresentacao",
-              fileExtension: "pptx",
-              mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-              fileSize: 780, // 780KB
-              uploadDate: "2025-04-23T16:30:45.953Z"
-            },
-            {
-              fileName: "texto",
-              fileExtension: "txt",
-              mimeType: "text/plain",
-              fileSize: 5, // 5KB
-              uploadDate: "2025-04-27T08:12:33.953Z"
-            }
-          ]
-        });
+        resolve([
+          {
+            _id: "file1",
+            ownerId: "6loNLyiJmj4bIaWTH9cwn",
+            fileName: "documento.pdf",
+            fileKey: "user-id/nanoid/documento.pdf",
+            fileSize: 251904, // 245KB in bytes
+            mimeType: "application/pdf",
+            createdAt: "2025-04-25T14:22:31.953Z",
+            updatedAt: "2025-04-25T14:22:31.953Z"
+          },
+          {
+            _id: "file2",
+            ownerId: "6loNLyiJmj4bIaWTH9cwn",
+            fileName: "imagem.jpg",
+            fileKey: "user-id/nanoid/imagem.jpg",
+            fileSize: 1048576, // 1MB in bytes
+            mimeType: "image/jpeg",
+            createdAt: "2025-04-26T10:15:22.953Z",
+            updatedAt: "2025-04-26T10:15:22.953Z"
+          },
+          {
+            _id: "file3",
+            ownerId: "6loNLyiJmj4bIaWTH9cwn",
+            fileName: "planilha.xlsx",
+            fileKey: "user-id/nanoid/planilha.xlsx",
+            fileSize: 524288, // 512KB in bytes
+            mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            createdAt: "2025-04-24T09:45:12.953Z",
+            updatedAt: "2025-04-24T09:45:12.953Z"
+          },
+          {
+            _id: "file4",
+            ownerId: "6loNLyiJmj4bIaWTH9cwn",
+            fileName: "apresentacao.pptx",
+            fileKey: "user-id/nanoid/apresentacao.pptx",
+            fileSize: 798720, // 780KB in bytes
+            mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            createdAt: "2025-04-23T16:30:45.953Z",
+            updatedAt: "2025-04-23T16:30:45.953Z"
+          },
+          {
+            _id: "file5",
+            ownerId: "6loNLyiJmj4bIaWTH9cwn",
+            fileName: "texto.txt",
+            fileKey: "user-id/nanoid/texto.txt",
+            fileSize: 5120, // 5KB in bytes
+            mimeType: "text/plain",
+            createdAt: "2025-04-27T08:12:33.953Z",
+            updatedAt: "2025-04-27T08:12:33.953Z"
+          }
+        ]);
       }, 1200);
     });
   }
@@ -164,7 +182,7 @@ export const getBucketFiles = async (): Promise<BucketFilesResponse> => {
 /**
  * Delete a file from the bucket
  */
-export const deleteFile = async (fileName: string, fileExtension: string): Promise<void> => {
+export const deleteFile = async (fileId: string): Promise<void> => {
   // Ensure we have a token
   const token = getAuthToken();
   if (!token) {
@@ -173,7 +191,7 @@ export const deleteFile = async (fileName: string, fileExtension: string): Promi
   
   // Simulation for development environment
   if (process.env.NODE_ENV === 'development') {
-    console.log(`Modo de desenvolvimento: simulando exclusão do arquivo ${fileName}.${fileExtension}`);
+    console.log(`Modo de desenvolvimento: simulando exclusão do arquivo ${fileId}`);
     
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -183,5 +201,5 @@ export const deleteFile = async (fileName: string, fileExtension: string): Promi
   }
   
   // Real implementation for production
-  await apiClient.delete<void>(`/files/${fileName}.${fileExtension}`);
+  await apiClient.delete<void>(`/files/${fileId}`);
 };

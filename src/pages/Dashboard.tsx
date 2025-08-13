@@ -125,7 +125,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">ID da conta</p>
-                    <p className="font-medium text-xs truncate">{userInfo?.id}</p>
+                    <p className="font-medium text-xs truncate">{userInfo?._id}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Criado em</p>

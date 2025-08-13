@@ -14,7 +14,7 @@ interface ConfirmRegisterData {
 
 interface LoginCredentials {
   email: string;
-  encPassword: string;
+  password: string;
 }
 
 interface AuthResponse {
@@ -109,40 +109,6 @@ export const initAuthService = () => {
   }
 };
 
-/**
- * Criptografa a senha usando AES-CBC
- */
-export const encryptPassword = async (password: string): Promise<string> => {
-  const keyHex = '2b7e151628aed2a6abf7158809cf4f3c2b7e151628aed2a6abf7158809cf4f3c';
-  const ivHex = '000102030405060708090a0b0c0d0e0f';
-
-  const key = await crypto.subtle.importKey(
-    'raw',
-    hexToBytes(keyHex),
-    { name: 'AES-CBC' },
-    false,
-    ['encrypt']
-  );
-
-  const iv = hexToBytes(ivHex);
-
-  const encrypted = await crypto.subtle.encrypt(
-    { name: 'AES-CBC', iv },
-    key,
-    new TextEncoder().encode(password)
-  );
-
-  return btoa(String.fromCharCode(...new Uint8Array(encrypted)));
-};
-
-// Utilitários
-function hexToBytes(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
-  }
-  return bytes;
-}
 
 /**
  * Registra um novo usuário
@@ -156,14 +122,14 @@ export const registerUser = async (data: RegisterData): Promise<RegisterResponse
       setTimeout(() => {
         resolve({
           success: true,
-          message: "Verification code sent"
+          message: "Verification code sent successfully!"
         });
       }, 1000);
     });
   }
   
   // Implementação real para produção
-  return await apiClient.post<RegisterResponse>('/register/code', data);
+  return await apiClient.post<RegisterResponse>('/users/register/send-code', data);
 };
 
 /**
@@ -178,27 +144,24 @@ export const confirmRegister = async (data: ConfirmRegisterData): Promise<Regist
       setTimeout(() => {
         resolve({
           success: true,
-          message: "Registration confirmed"
+          message: "User verified successfully. Please log in."
         });
       }, 1000);
     });
   }
   
   // Implementação real para produção
-  return await apiClient.post<RegisterResponse>('/register/confirm', data);
+  return await apiClient.post<RegisterResponse>('/users/register/confirm', data);
 };
 
 /**
  * Realiza o login do usuário
  */
 export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
-  // Criptografar a senha antes de enviar
-  const encPassword = await encryptPassword(password);
-  
   // Simulação para desenvolvimento
   if (process.env.NODE_ENV === 'development') {
     console.log('Modo de desenvolvimento: simulando login');
-    console.log('Login tentativa', { email, encPassword });
+    console.log('Login tentativa', { email, password });
     
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -221,7 +184,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
   }
   
   // Implementação real para produção
-  const response = await apiClient.post<AuthResponse>('/login', { email, encPassword });
+  const response = await apiClient.post<AuthResponse>('/auth/login', { email, password });
   setAuthToken(response.access_token);
   return response;
 };
@@ -251,8 +214,8 @@ export const getCurrentUser = async (): Promise<UserData | null> => {
   }
   
   try {
-    const response = await apiClient.get<{ user: UserData }>('/user/me');
-    return response.user;
+    const response = await apiClient.get<UserData>('/users/me');
+    return response;
   } catch (error) {
     // Se ocorrer um erro 401, remove o token
     if ((error as any).status === 401) {
@@ -275,14 +238,14 @@ export const requestPasswordRecovery = async (email: string): Promise<RecoveryRe
       setTimeout(() => {
         resolve({
           success: true,
-          message: "Código de recuperação enviado para seu email"
+          message: "If a user with that email exists, a recovery code has been sent."
         });
       }, 1000);
     });
   }
   
   // Implementação real para produção
-  return await apiClient.post<RecoveryResponse>('/login/recovery', { email });
+  return await apiClient.post<RecoveryResponse>('/users/recovery/send-code', { email });
 };
 
 /**
@@ -303,8 +266,8 @@ export const verifyRecoveryCode = async (email: string, code: string): Promise<R
     });
   }
   
-  // Implementação real para produção
-  return await apiClient.post<RecoveryResponse>('/login/recovery/code', { email, code });
+  // Implementação real para produção - A nova API combina verificação e alteração em um endpoint
+  return { success: true, message: "Use confirmPasswordRecovery directly" };
 };
 
 /**
@@ -312,9 +275,6 @@ export const verifyRecoveryCode = async (email: string, code: string): Promise<R
  * Define uma nova senha para o usuário
  */
 export const confirmPasswordRecovery = async (email: string, code: string, newPassword: string): Promise<RecoveryResponse> => {
-  // Criptografar a nova senha antes de enviar
-  const encryptedPassword = await encryptPassword(newPassword);
-  
   // Simulação para desenvolvimento
   if (process.env.NODE_ENV === 'development') {
     console.log('Modo de desenvolvimento: simulando confirmação de recuperação de senha');
@@ -323,17 +283,17 @@ export const confirmPasswordRecovery = async (email: string, code: string, newPa
       setTimeout(() => {
         resolve({
           success: true,
-          message: "Senha atualizada com sucesso"
+          message: "Password has been reset successfully."
         });
       }, 1000);
     });
   }
   
   // Implementação real para produção
-  return await apiClient.post<RecoveryResponse>('/login/recovery/confirm', { 
+  return await apiClient.post<RecoveryResponse>('/users/recovery/confirm', { 
     email, 
     code,
-    newPassword: encryptedPassword 
+    newPassword 
   });
 };
 

@@ -3,18 +3,43 @@ import { apiClient } from "./apiClient";
 interface FileUploadRequest {
   fileName: string;
   fileSize: number;
-  fileType: string;
+  mimeType: string;
 }
 
 interface UploadUrlResponse {
-  url: string;
-  fields: Record<string, string>;  // Campos do formulário S3, como AWSAccessKeyId, signature, etc.
+  presignedPost: {
+    url: string;
+    fields: Record<string, string>;
+  };
+  fileKey: string;
+}
+
+interface UploadCompleteRequest {
+  fileKey: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+}
+
+interface UploadCompleteResponse {
+  success: boolean;
+  message: string;
+  file: {
+    _id: string;
+    ownerId: string;
+    fileName: string;
+    fileKey: string;
+    fileSize: number;
+    mimeType: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 // Função para obter a URL e os campos do formulário de upload S3 do backend
 export const getUploadUrl = async (fileData: FileUploadRequest): Promise<UploadUrlResponse> => {
   try {
-    const response = await apiClient.post<UploadUrlResponse>('/files/upload', fileData);
+    const response = await apiClient.post<UploadUrlResponse>('/files/upload-url', fileData);
     return response;  // Retorna a URL e os campos do formulário S3
   } catch (error) {
     console.error('Erro ao obter URL de upload:', error);
@@ -76,6 +101,28 @@ export const uploadFileToUrl = async (
     return uploadPromise;
   } catch (error) {
     console.error('Erro ao fazer upload do arquivo:', error);
+    throw error;
+  }
+};
+
+// Função para confirmar o upload no backend
+export const confirmUpload = async (data: UploadCompleteRequest): Promise<UploadCompleteResponse> => {
+  try {
+    const response = await apiClient.post<UploadCompleteResponse>('/files/upload-complete', data);
+    return response;
+  } catch (error) {
+    console.error('Erro ao confirmar upload:', error);
+    throw error;
+  }
+};
+
+// Função para obter URL de download de um arquivo
+export const getDownloadUrl = async (fileId: string): Promise<{ url: string }> => {
+  try {
+    const response = await apiClient.get<{ url: string }>(`/files/${fileId}/download-url`);
+    return response;
+  } catch (error) {
+    console.error('Erro ao obter URL de download:', error);
     throw error;
   }
 };

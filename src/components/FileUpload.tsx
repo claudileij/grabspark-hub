@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Check, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { getUploadUrl, uploadFileToUrl } from "@/services/uploadService";
+import { getUploadUrl, uploadFileToUrl, confirmUpload } from "@/services/uploadService";
 import { Progress } from "@/components/ui/progress";
 
 const FileUpload = () => {
@@ -32,19 +32,27 @@ const FileUpload = () => {
       const uploadUrl = await getUploadUrl({
         fileName: file.name,
         fileSize: file.size,
-        fileType: file.type,
+        mimeType: file.type,
       });
 
       // Use the progress callback from our enhanced uploadFileToUrl function
       await uploadFileToUrl(
-        uploadUrl.url,
-        uploadUrl.fields,
+        uploadUrl.presignedPost.url,
+        uploadUrl.presignedPost.fields,
         file, 
         (progress) => {
           setUploadProgress(progress);
           console.log(`Upload progress: ${progress}%`);
         }
       );
+
+      // Confirm upload with backend
+      await confirmUpload({
+        fileKey: uploadUrl.fileKey,
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type,
+      });
       
       // Ensure we set 100% when complete
       setUploadProgress(100);
