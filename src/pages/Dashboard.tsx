@@ -7,14 +7,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import Layout from "@/components/Layout";
-import { getUserInfo, UserInfo, getFilesData, FilesData } from "@/services/userService";
+import { getUserInfo, UserInfo, getBucketFiles, BucketFile } from "@/services/userService";
+import { Progress } from "@/components/ui/progress";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [filesData, setFilesData] = useState<FilesData | null>(null);
+  const [bucketFiles, setBucketFiles] = useState<BucketFile[]>([]);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isLoadingFiles, setIsLoadingFiles] = useState(true);
   const user = useCurrentUser();
@@ -46,8 +47,8 @@ const Dashboard = () => {
     // Fetch files data independently
     const fetchFilesData = async () => {
       try {
-        const files = await getFilesData();
-        setFilesData(files);
+        const files = await getBucketFiles();
+        setBucketFiles(files);
       } catch (error) {
         console.error("Erro ao carregar dados de arquivos:", error);
         toast({
@@ -91,6 +92,16 @@ const Dashboard = () => {
   const handleViewFilesClick = () => {
     navigate("/files");
   };
+
+  const handleDocsClick = () => {
+    navigate("/docs");
+  };
+
+  // Calcula o uso atual e progresso
+  const currentUsageBytes = bucketFiles.reduce((total, file) => total + file.fileSize, 0);
+  const currentUsageMB = currentUsageBytes / (1024 * 1024);
+  const limitMB = 100; // 100MB limit padrão
+  const usagePercentage = Math.min((currentUsageMB / limitMB) * 100, 100);
 
   return (
     <Layout>
@@ -150,6 +161,10 @@ const Dashboard = () => {
                 <FileText className="mr-2 h-4 w-4" />
                 Ver arquivos
               </Button>
+              <Button className="w-full justify-start" variant="outline" onClick={handleDocsClick}>
+                <Database className="mr-2 h-4 w-4" />
+                Documentação
+              </Button>
             </CardContent>
           </Card>
 
@@ -174,13 +189,19 @@ const Dashboard = () => {
                   </div>
                   <div className="bg-secondary/20 p-4 rounded-lg">
                     <p className="text-sm text-muted-foreground">Quantidade de arquivos</p>
-                    <p className="text-lg font-medium">{filesData?.objectsAmount || userInfo.bucket.objectsAmount}</p>
+                    <p className="text-lg font-medium">{bucketFiles.length}</p>
                   </div>
                   <div className="bg-secondary/20 p-4 rounded-lg">
                     <p className="text-sm text-muted-foreground">Espaço utilizado</p>
-                    <p className="text-lg font-medium">
-                      {formatSize(filesData?.bucketSize || userInfo.bucket.bucketSize)}
-                    </p>
+                    <div className="space-y-2">
+                      <p className="text-lg font-medium">
+                        {formatSize(currentUsageBytes)} / {limitMB}MB
+                      </p>
+                      <Progress value={usagePercentage} className="h-2" />
+                      <p className="text-xs text-muted-foreground">
+                        {usagePercentage.toFixed(1)}% utilizado
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (

@@ -178,6 +178,11 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
         
         setAuthToken(mockResponse.access_token);
         
+        // Reload da página para recarregar o JWT
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+        
         resolve(mockResponse);
       }, 800);
     });
@@ -186,6 +191,10 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
   // Implementação real para produção
   const response = await apiClient.post<AuthResponse>('/auth/login', { email, password });
   setAuthToken(response.access_token);
+  
+  // Reload da página para recarregar o JWT
+  window.location.reload();
+  
   return response;
 };
 

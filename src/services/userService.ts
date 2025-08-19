@@ -19,10 +19,6 @@ export interface UserInfo {
   updatedAt: string;
 }
 
-export interface FilesData {
-  objectsAmount: number;
-  bucketSize: number;
-}
 
 export interface BucketFile {
   _id: string;
@@ -75,33 +71,6 @@ export const getUserInfo = async (): Promise<UserInfo> => {
   return await apiClient.get<UserInfo>('/users/me');
 };
 
-/**
- * Get files data including count and total size
- */
-export const getFilesData = async (): Promise<FilesData> => {
-  // Ensure we have a token
-  const token = getAuthToken();
-  if (!token) {
-    throw new Error("Não autenticado");
-  }
-  
-  // Simulation for development environment
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Modo de desenvolvimento: simulando obtenção de dados de arquivos');
-    
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          objectsAmount: 5,
-          bucketSize: 1536000 // 1.5MB for testing
-        });
-      }, 800);
-    });
-  }
-  
-  // Real implementation for production
-  return await apiClient.get<FilesData>('/files/files-data');
-};
 
 /**
  * Get all files from the user's bucket

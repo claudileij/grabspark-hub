@@ -18,6 +18,8 @@ import { initAuthService } from "@/services/authService";
 import Layout from "@/components/Layout";
 import FileUpload from "@/components/FileUpload";
 import FilesPage from "@/pages/FilesPage";
+import DocsPage from "@/pages/DocsPage";
+import Privacy from "@/pages/Privacy";
 
 // Configure o QueryClient com tratamento de erro padrão
 const queryClient = new QueryClient({
@@ -46,7 +48,9 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/resources" element={<Resources />} />
+            <Route path="/docs" element={<DocsPage />} />
             
             {/* Rotas protegidas */}
             <Route path="/dashboard" element={
