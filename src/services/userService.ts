@@ -14,6 +14,7 @@ export interface UserInfo {
   username: string;
   email: string;
   bucket: BucketInfo;
+  storageLimit: number; // Storage limit in KB
   isVerified: boolean;
   createdAt: string;
   updatedAt: string;
@@ -59,6 +60,7 @@ export const getUserInfo = async (): Promise<UserInfo> => {
             objectsAmount: 0,
             bucketSize: 0.0
           },
+          storageLimit: 102400, // 100MB in KB
           isVerified: true,
           createdAt: "2025-04-14T02:41:16.953Z",
           updatedAt: "2025-04-14T02:41:16.953Z",
