@@ -100,7 +100,7 @@ const Dashboard = () => {
   // Calcula o uso atual e progresso
   const currentUsageBytes = bucketFiles.reduce((total, file) => total + file.fileSize, 0);
   const currentUsageMB = currentUsageBytes / (1024 * 1024);
-  const limitMB = userInfo ? (userInfo.storageLimit / 1024) : 100; // Convert KB to MB
+  const limitMB = userInfo ? (userInfo.storageLimit / 1024 / 1024) : 100; // Convert Bytes to MB
   const usagePercentage = Math.min((currentUsageMB / limitMB) * 100, 100);
 
   return (
