@@ -1,12 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { File, FileText, FileImage, FileSpreadsheet, Presentation, MoreHorizontal, Trash2, Loader } from "lucide-react";
+import { File, FileText, FileImage, FileSpreadsheet, Presentation, MoreHorizontal, Trash2, Loader, Download, Share, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { BucketFile, getBucketFiles, deleteFile } from "@/services/userService";
+import { getDownloadUrl } from "@/services/uploadService";
 import Layout from "@/components/Layout";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { ShareLinkDialog } from "@/components/ShareLinkDialog";
+import { FileStatsDialog } from "@/components/FileStatsDialog";
 import {
   Table,
   TableBody,
@@ -28,6 +31,9 @@ const FilesPage = () => {
   const [files, setFiles] = useState<BucketFile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingFile, setDeletingFile] = useState<string | null>(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [statsDialogOpen, setStatsDialogOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<BucketFile | null>(null);
   const user = useCurrentUser();
 
   useEffect(() => {
@@ -112,6 +118,32 @@ const FilesPage = () => {
     }
   };
 
+  const handleDownload = async (file: BucketFile) => {
+    try {
+      const { url } = await getDownloadUrl(file._id);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Download iniciado");
+    } catch (error) {
+      console.error("Erro ao baixar arquivo:", error);
+      toast.error("Não foi possível baixar o arquivo");
+    }
+  };
+
+  const handleShareLink = (file: BucketFile) => {
+    setSelectedFile(file);
+    setShareDialogOpen(true);
+  };
+
+  const handleStats = (file: BucketFile) => {
+    setSelectedFile(file);
+    setStatsDialogOpen(true);
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 md:py-16">
@@ -178,6 +210,18 @@ const FilesPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
+                            <DropdownMenuItem onClick={() => handleDownload(file)}>
+                              <Download className="h-4 w-4 mr-2" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShareLink(file)}>
+                              <Share className="h-4 w-4 mr-2" />
+                              Share Link
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleStats(file)}>
+                              <BarChart3 className="h-4 w-4 mr-2" />
+                              Estatísticas
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleDeleteFile(file._id)}
                               className="text-destructive focus:text-destructive"
@@ -212,6 +256,23 @@ const FilesPage = () => {
           )}
         </div>
       </div>
+      
+      {selectedFile && (
+        <>
+          <ShareLinkDialog
+            open={shareDialogOpen}
+            onOpenChange={setShareDialogOpen}
+            fileName={selectedFile.fileName}
+            fileId={selectedFile._id}
+          />
+          <FileStatsDialog
+            open={statsDialogOpen}
+            onOpenChange={setStatsDialogOpen}
+            fileName={selectedFile.fileName}
+            fileId={selectedFile._id}
+          />
+        </>
+      )}
     </Layout>
   );
 };
