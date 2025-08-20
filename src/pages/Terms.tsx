@@ -23,7 +23,7 @@ const TermsPage = () => {
             
             <h2 className="text-2xl font-semibold mt-8 mb-4">3. Contas de Usuário</h2>
             <p>
-              É proibida a criação de múltiplas contas com o objetivo de burlar os limites do plano gratuito ou obter 
+              É proibida a criação de múltiplas contas com o objetivo de burlar os limites de uso ou obter 
               vantagens indevidas. A detecção de tal comportamento poderá resultar na suspensão permanente de todas as 
               contas associadas.
             </p>
@@ -67,9 +67,9 @@ const TermsPage = () => {
             
             <h2 className="text-2xl font-semibold mt-8 mb-4">7. Limitações de Serviço</h2>
             <p>
-              O armazenamento gratuito é uma oferta promocional e pode ser alterado ou removido conforme a sustentabilidade 
-              do serviço. Nos reservamos o direito de impor limitações de uso, incluindo, mas não limitado a, espaço de 
-              armazenamento, banda de transferência e período de retenção de arquivos.
+              Nos reservamos o direito de impor limitações de uso, incluindo, mas não limitado a, espaço de 
+              armazenamento, banda de transferência e período de retenção de arquivos, conforme necessário para manter 
+              a qualidade e estabilidade do serviço.
             </p>
             
             <h2 className="text-2xl font-semibold mt-8 mb-4">8. Privacidade</h2>

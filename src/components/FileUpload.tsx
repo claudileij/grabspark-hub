@@ -1,16 +1,19 @@
 
 import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Upload, FileUp, Check, AlertCircle } from "lucide-react";
+import { Upload, FileUp, Check, AlertCircle, Share } from "lucide-react";
 import { toast } from "sonner";
 import { getUploadUrl, uploadFileToUrl, confirmUpload } from "@/services/uploadService";
 import { Progress } from "@/components/ui/progress";
+import { ShareLinkDialog } from "@/components/ShareLinkDialog";
 
 const FileUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [uploadedFileId, setUploadedFileId] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
@@ -47,7 +50,7 @@ const FileUpload = () => {
       );
 
       // Confirm upload with backend
-      await confirmUpload({
+      const response = await confirmUpload({
         fileKey: uploadUrl.fileKey,
         fileName: file.name,
         fileSize: file.size,
@@ -57,6 +60,7 @@ const FileUpload = () => {
       // Ensure we set 100% when complete
       setUploadProgress(100);
       setUploadStatus('success');
+      setUploadedFileId(response.file._id);
       toast.success('Arquivo enviado com sucesso!');
     } catch (error) {
       console.error('Erro no upload:', error);
@@ -145,12 +149,29 @@ const FileUpload = () => {
           </Button>
         </div>
 
-        <div className="mt-4 text-center">
-          <p className="text-xs text-muted-foreground">
-            Formatos suportados: PDF, JPG, PNG, DOC
-          </p>
-        </div>
+        {uploadStatus === 'success' && fileName && uploadedFileId && (
+          <div className="mt-4 flex justify-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShareDialogOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Share className="h-4 w-4" />
+              Compartilhar
+            </Button>
+          </div>
+        )}
       </div>
+      
+      {fileName && uploadedFileId && (
+        <ShareLinkDialog
+          open={shareDialogOpen}
+          onOpenChange={setShareDialogOpen}
+          fileName={fileName}
+          fileId={uploadedFileId}
+        />
+      )}
     </div>
   );
 };

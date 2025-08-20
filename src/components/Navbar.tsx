@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogIn, Cloud, LogOut, User, Settings, UploadCloud, LayoutDashboard } from "lucide-react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +58,7 @@ const Navbar = () => {
               Preços
             </Link>
             <div className="ml-4 flex items-center space-x-2">
+              <ThemeToggle />
               {user ? (
                 <>
                   <DropdownMenu>
@@ -88,10 +90,6 @@ const Navbar = () => {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Button variant="outline" onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sair
-                  </Button>
                 </>
               ) : (
                 <>
@@ -149,6 +147,9 @@ const Navbar = () => {
               Preços
             </Link>
             <div className="pt-4 flex flex-col space-y-2">
+              <div className="px-2 mb-2">
+                <ThemeToggle />
+              </div>
               {user ? (
                 <>
                   <div className="flex flex-col space-y-1 items-start mb-2 px-2">

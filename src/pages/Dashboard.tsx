@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Database, FileText, UploadCloud } from "lucide-react";
+import { User, Database, FileText, UploadCloud, Download, Share, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -10,6 +10,9 @@ import Layout from "@/components/Layout";
 import { getUserInfo, UserInfo, getBucketFiles, BucketFile } from "@/services/userService";
 import { Progress } from "@/components/ui/progress";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { ShareLinkDialog } from "@/components/ShareLinkDialog";
+import { FileStatsDialog } from "@/components/FileStatsDialog";
+import { getDownloadUrl } from "@/services/uploadService";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -18,6 +21,9 @@ const Dashboard = () => {
   const [bucketFiles, setBucketFiles] = useState<BucketFile[]>([]);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isLoadingFiles, setIsLoadingFiles] = useState(true);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [statsDialogOpen, setStatsDialogOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<BucketFile | null>(null);
   const user = useCurrentUser();
 
   useEffect(() => {
@@ -95,6 +101,38 @@ const Dashboard = () => {
 
   const handleDocsClick = () => {
     navigate("/docs");
+  };
+
+  const handleDownload = async (file: BucketFile) => {
+    try {
+      const downloadUrl = await getDownloadUrl(file._id);
+      const link = document.createElement('a');
+      link.href = downloadUrl.url;
+      link.download = file.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast({
+        title: "Download iniciado",
+        description: `Fazendo download de ${file.fileName}`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro no download",
+        description: "Não foi possível fazer o download do arquivo.",
+      });
+    }
+  };
+
+  const handleShare = (file: BucketFile) => {
+    setSelectedFile(file);
+    setShareDialogOpen(true);
+  };
+
+  const handleStats = (file: BucketFile) => {
+    setSelectedFile(file);
+    setStatsDialogOpen(true);
   };
 
   // Calcula o uso atual e progresso
@@ -182,27 +220,87 @@ const Dashboard = () => {
                   <p className="text-muted-foreground">Carregando informações do bucket...</p>
                 </div>
               ) : userInfo?.bucket?.hasBucket ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-secondary/20 p-4 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Nome do bucket</p>
-                    <p className="text-lg font-medium">{userInfo.bucket.bucketName}</p>
-                  </div>
-                  <div className="bg-secondary/20 p-4 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Quantidade de arquivos</p>
-                    <p className="text-lg font-medium">{bucketFiles.length}</p>
-                  </div>
-                  <div className="bg-secondary/20 p-4 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Espaço utilizado</p>
-                    <div className="space-y-2">
-                      <p className="text-lg font-medium">
-                        {formatSize(currentUsageBytes)} / {limitMB}MB
-                      </p>
-                      <Progress value={usagePercentage} className="h-2" />
-                      <p className="text-xs text-muted-foreground">
-                        {usagePercentage.toFixed(1)}% utilizado
-                      </p>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-secondary/20 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Nome do bucket</p>
+                      <p className="text-lg font-medium">{userInfo.bucket.bucketName}</p>
+                    </div>
+                    <div className="bg-secondary/20 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Quantidade de arquivos</p>
+                      <p className="text-lg font-medium">{bucketFiles.length}</p>
+                    </div>
+                    <div className="bg-secondary/20 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Espaço utilizado</p>
+                      <div className="space-y-2">
+                        <p className="text-lg font-medium">
+                          {formatSize(currentUsageBytes)} / {limitMB}MB
+                        </p>
+                        <Progress value={usagePercentage} className="h-2" />
+                        <p className="text-xs text-muted-foreground">
+                          {usagePercentage.toFixed(1)}% utilizado
+                        </p>
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Files List */}
+                  {bucketFiles.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Arquivos Recentes</h3>
+                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                        {bucketFiles.slice(0, 5).map((file) => (
+                          <div 
+                            key={file._id} 
+                            className="flex items-center justify-between p-3 bg-secondary/10 rounded-lg border border-border/50"
+                          >
+                            <div className="flex items-center space-x-3 flex-1 min-w-0">
+                              <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{file.fileName}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {formatSize(file.fileSize)} • {formatDate(file.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-1 flex-shrink-0">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => handleDownload(file)}
+                                className="h-8 w-8"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => handleShare(file)}
+                                className="h-8 w-8"
+                              >
+                                <Share className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => handleStats(file)}
+                                className="h-8 w-8"
+                              >
+                                <BarChart3 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {bucketFiles.length > 5 && (
+                        <div className="text-center mt-4">
+                          <Button variant="outline" onClick={handleViewFilesClick}>
+                            Ver todos os arquivos ({bucketFiles.length})
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-4">
@@ -215,6 +313,24 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Dialogs */}
+        {selectedFile && (
+          <>
+            <ShareLinkDialog
+              open={shareDialogOpen}
+              onOpenChange={setShareDialogOpen}
+              fileName={selectedFile.fileName}
+              fileId={selectedFile._id}
+            />
+            <FileStatsDialog
+              open={statsDialogOpen}
+              onOpenChange={setStatsDialogOpen}
+              fileName={selectedFile.fileName}
+              fileId={selectedFile._id}
+            />
+          </>
+        )}
       </div>
     </Layout>
   );
